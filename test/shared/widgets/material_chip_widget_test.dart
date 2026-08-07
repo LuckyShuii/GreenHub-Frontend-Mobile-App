@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_frontend/shared/widgets/material_chip_widget.dart';
+import 'package:flutter_frontend/shared/widgets/material_chip_widget.dart' as chip;
 
 void main() {
   group('MaterialChipWidget', () {
@@ -8,8 +8,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MaterialChipWidget(
-              materialType: MaterialType.verre,
+            body: chip.MaterialChipWidget(
+              materialType: chip.MaterialType.verre,
               onPressed: () {},
             ),
           ),
@@ -22,17 +22,17 @@ void main() {
 
     testWidgets('renders all material types correctly', (WidgetTester tester) async {
       final materialTypes = [
-        MaterialType.verre,
-        MaterialType.plastique,
-        MaterialType.carton,
-        MaterialType.metal,
+        chip.MaterialType.verre,
+        chip.MaterialType.plastique,
+        chip.MaterialType.carton,
+        chip.MaterialType.metal,
       ];
 
       for (final type in materialTypes) {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: MaterialChipWidget(
+              body: chip.MaterialChipWidget(
                 materialType: type,
                 onPressed: () {},
               ),
@@ -50,8 +50,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MaterialChipWidget(
-              materialType: MaterialType.verre,
+            body: chip.MaterialChipWidget(
+              materialType: chip.MaterialType.verre,
               onPressed: () => wasPressed = true,
             ),
           ),
@@ -68,8 +68,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MaterialChipWidget(
-              materialType: MaterialType.plastique,
+            body: chip.MaterialChipWidget(
+              materialType: chip.MaterialType.plastique,
               isSelected: true,
               onPressed: () {},
             ),
@@ -77,16 +77,16 @@ void main() {
         ),
       );
 
-      final chip = tester.widget<FilterChip>(find.byType(FilterChip));
-      expect(chip.selected, true);
+      final filterChip = tester.widget<FilterChip>(find.byType(FilterChip));
+      expect(filterChip.selected, true);
     });
 
     testWidgets('shows unselected state correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: MaterialChipWidget(
-              materialType: MaterialType.plastique,
+            body: chip.MaterialChipWidget(
+              materialType: chip.MaterialType.plastique,
               isSelected: false,
               onPressed: () {},
             ),
@@ -94,8 +94,8 @@ void main() {
         ),
       );
 
-      final chip = tester.widget<FilterChip>(find.byType(FilterChip));
-      expect(chip.selected, false);
+      final filterChip = tester.widget<FilterChip>(find.byType(FilterChip));
+      expect(filterChip.selected, false);
     });
 
     testWidgets('toggles selection when tapped', (WidgetTester tester) async {
@@ -106,8 +106,8 @@ void main() {
           home: Scaffold(
             body: StatefulBuilder(
               builder: (context, setState) {
-                return MaterialChipWidget(
-                  materialType: MaterialType.carton,
+                return chip.MaterialChipWidget(
+                  materialType: chip.MaterialType.carton,
                   isSelected: isSelected,
                   onPressed: () => setState(() => isSelected = !isSelected),
                 );
@@ -126,17 +126,17 @@ void main() {
     });
 
     testWidgets('all material types have correct colors', (WidgetTester tester) async {
-      expect(MaterialType.verre.color, isNotNull);
-      expect(MaterialType.plastique.color, isNotNull);
-      expect(MaterialType.carton.color, isNotNull);
-      expect(MaterialType.metal.color, isNotNull);
+      expect(chip.MaterialType.verre.color, isNotNull);
+      expect(chip.MaterialType.plastique.color, isNotNull);
+      expect(chip.MaterialType.carton.color, isNotNull);
+      expect(chip.MaterialType.metal.color, isNotNull);
     });
 
     testWidgets('all material types have correct labels', (WidgetTester tester) async {
-      expect(MaterialType.verre.label, 'Verre');
-      expect(MaterialType.plastique.label, 'Plastique');
-      expect(MaterialType.carton.label, 'Carton');
-      expect(MaterialType.metal.label, 'Métal');
+      expect(chip.MaterialType.verre.label, 'Verre');
+      expect(chip.MaterialType.plastique.label, 'Plastique');
+      expect(chip.MaterialType.carton.label, 'Carton');
+      expect(chip.MaterialType.metal.label, 'Métal');
     });
   });
 }

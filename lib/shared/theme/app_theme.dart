@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 import 'app_radii.dart';
+import 'app_spacing.dart';
 import 'app_text_styles.dart';
 
 class AppTheme {
@@ -21,7 +22,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadii.sm),
           borderSide: const BorderSide(color: AppColors.o100),
@@ -43,7 +47,7 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.erreur, width: 1.5),
         ),
       ),
-      textTheme: const TextTheme(
+      textTheme: TextTheme(
         displayLarge: AppTextStyles.display,
         headlineMedium: AppTextStyles.title,
         headlineSmall: AppTextStyles.subtitle,

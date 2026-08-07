@@ -1,8 +1,8 @@
 import 'package:go_router/go_router.dart';
 
-import '../features/auth/screens/landing_page.dart';
-import '../features/auth/screens/login_page.dart';
-import '../features/auth/screens/register_page.dart';
+import '../features/auth/screens/landing_screen.dart';
+import '../features/auth/screens/login_screen.dart';
+import '../features/auth/screens/register_screen.dart';
 
 class AppRoutes {
   static const String landing = '/';
@@ -15,15 +15,15 @@ final GoRouter appRouter = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: AppRoutes.landing,
-      builder: (context, state) => const LandingPage(),
+      builder: (context, state) => const LandingScreen(),
     ),
     GoRoute(
       path: AppRoutes.login,
-      builder: (context, state) => const LoginPage(),
+      builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
       path: AppRoutes.register,
-      builder: (context, state) => const RegisterPage(),
+      builder: (context, state) => const RegisterScreen(),
     ),
   ],
 );
