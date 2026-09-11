@@ -39,6 +39,14 @@ class _MapPageState extends State<MapPage> {
         options: MapOptions(
           initialCenter: LatLng(47.3941, 0.6848),
           initialZoom: 15,
+          onPositionChanged: (position, hasGesture) async {
+            if (!hasGesture) return;
+            await _mapManager.savePosition(
+                position.center.latitude,
+                position.center.longitude,
+                position.zoom
+            );
+          }
         ),
         children: [
           TileLayer(
