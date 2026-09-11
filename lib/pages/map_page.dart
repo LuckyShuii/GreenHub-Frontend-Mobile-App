@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/services/mapManager.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -13,8 +14,22 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
 
   final MapController _mapController = MapController();
+  final MapManager _mapManager = MapManager();
 
-  static const LatLng _tours = LatLng(47.3941, 0.6848);
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final position = await _mapManager.getPosition();
+      if (position == null) {
+        return;
+      }
+      _mapController.move(
+          position['latlng'],
+          position['zoom']
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +42,7 @@ class _MapPageState extends State<MapPage> {
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
-          initialCenter: _tours,
+          initialCenter: LatLng(47.3941, 0.6848),
           initialZoom: 15,
         ),
         children: [
@@ -38,8 +53,12 @@ class _MapPageState extends State<MapPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _mapController.move(_tours,15);
+          onPressed: () async {
+            final position = await _mapManager.getCurrentPosition();
+            if (position == null) {
+              return;
+            }
+            _mapController.move(position['latlng'], position['zoom']);
           },
           child: const Icon(Icons.my_location)
       ),
