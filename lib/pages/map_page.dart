@@ -52,15 +52,15 @@ class _MapPageState extends State<MapPage> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            final position = await _mapManager.getCurrentPosition();
-            if (position == null) {
-              return;
-            }
-            _mapController.move(position['latlng'], position['zoom']);
-          },
-          child: const Icon(Icons.my_location)
+      floatingActionButton: FABButtonWidget(
+        onPressed: () async {
+          final position = await _mapManager.getCurrentPosition();
+          if (position == null) {
+            return;
+          }
+          _mapController.move(position['latlng'], position['zoom']);
+        },
+        icon: Icons.my_location,
       ),
       bottomNavigationBar: BottomNavigationBar(
           items: [
