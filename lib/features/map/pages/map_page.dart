@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/services/map_manager.dart';
+import 'package:flutter_frontend/features/map/services/map_manager.dart';
 import 'package:flutter_frontend/shared/shared.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
