@@ -13,8 +13,8 @@ class MapManager {
       return lastSavePosition;
     }
     return {
-      'latlang': LatLng(47.3941, 0.6848),
-      'zoom' : 15,
+      'latlng': LatLng(47.3941, 0.6848),
+      'zoom' : 15.0,
     };
   }
 
@@ -33,8 +33,8 @@ class MapManager {
 
     Position position = await Geolocator.getCurrentPosition();
     return {
-      'latlang': LatLng(position.latitude, position.longitude),
-      'zoom' : 15,
+      'latlng': LatLng(position.latitude, position.longitude),
+      'zoom' : 15.0,
     };
   }
 
@@ -60,7 +60,7 @@ class MapManager {
     }
 
     return {
-      'latlang': LatLng(latitude, longitude),
+      'latlng': LatLng(latitude, longitude),
       'zoom' : zoom,
     };
   }
