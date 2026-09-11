@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/services/mapManager.dart';
+import 'package:flutter_frontend/services/map_manager.dart';
+import 'package:flutter_frontend/shared/shared.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,7 +13,6 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-
   final MapController _mapController = MapController();
   final MapManager _mapManager = MapManager();
 
@@ -24,10 +24,7 @@ class _MapPageState extends State<MapPage> {
       if (position == null) {
         return;
       }
-      _mapController.move(
-          position['latlng'],
-          position['zoom']
-      );
+      _mapController.move(position['latlng'], position['zoom']);
     });
   }
 
@@ -36,9 +33,7 @@ class _MapPageState extends State<MapPage> {
     final mapTilerKey = dotenv.env["MAPTILER_API_KEY"];
 
     return Scaffold(
-      appBar: AppBar(
-          title: const Text("Map")
-      ),
+      appBar: AppBar(title: const Text("Map")),
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
@@ -63,10 +58,11 @@ class _MapPageState extends State<MapPage> {
         icon: Icons.my_location,
       ),
       bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profil"),
-          ]),
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profil"),
+        ],
+      ),
     );
   }
 }
