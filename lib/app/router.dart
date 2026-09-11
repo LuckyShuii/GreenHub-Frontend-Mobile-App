@@ -1,3 +1,4 @@
+import 'package:flutter_frontend/features/map/pages/map_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/screens/landing_screen.dart';
@@ -8,6 +9,7 @@ class AppRoutes {
   static const String landing = '/';
   static const String login = '/login';
   static const String register = '/register';
+  static const String map = '/map';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -24,6 +26,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.register,
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+        path: AppRoutes.map,
+        builder: (context, state) => const MapPage()
     ),
   ],
 );
