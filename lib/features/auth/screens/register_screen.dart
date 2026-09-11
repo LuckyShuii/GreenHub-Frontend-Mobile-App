@@ -9,8 +9,10 @@ import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/utils/no_overscroll_scroll_behavior.dart';
 import '../../../shared/widgets/auth_text_field_widget.dart';
 import '../theme/auth_sizes.dart';
+import '../utils/password_policy.dart';
 import '../widgets/auth_back_button_widget.dart';
 import '../widgets/auth_primary_button_widget.dart';
+import '../widgets/password_composition_widget.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -38,8 +40,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    _passwordController.addListener(_updatePasswordMismatch);
-    _passwordConfirmationController.addListener(_updatePasswordMismatch);
+    _passwordController.addListener(_updatePasswordState);
+    _passwordConfirmationController.addListener(_updatePasswordState);
   }
 
   @override
@@ -49,8 +51,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailController.dispose();
     _usernameController.dispose();
     _locationController.dispose();
-    _passwordController.removeListener(_updatePasswordMismatch);
-    _passwordConfirmationController.removeListener(_updatePasswordMismatch);
+    _passwordController.removeListener(_updatePasswordState);
+    _passwordConfirmationController.removeListener(_updatePasswordState);
     _passwordController.dispose();
     _passwordConfirmationController.dispose();
     super.dispose();
@@ -75,18 +77,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
     context.go(AppRoutes.login);
   }
 
-  void _updatePasswordMismatch() {
+  void _updatePasswordState() {
     final bool hasPasswordMismatch =
         _passwordConfirmationController.text.isNotEmpty &&
         _passwordConfirmationController.text != _passwordController.text;
 
-    if (hasPasswordMismatch == _hasPasswordMismatch) {
-      return;
-    }
-
     setState(() {
       _hasPasswordMismatch = hasPasswordMismatch;
     });
+  }
+
+  bool get _canSubmit {
+    final String password = _passwordController.text;
+    final String confirmation = _passwordConfirmationController.text;
+
+    return PasswordPolicy(password).isValid &&
+        confirmation.isNotEmpty &&
+        confirmation == password;
+  }
+
+  String? _validateRegistrationPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Veuillez renseigner votre mot de passe.';
+    }
+    if (!PasswordPolicy(value).isValid) {
+      return 'Le mot de passe ne respecte pas les critères requis.';
+    }
+    return null;
   }
 
   String? _validatePasswordConfirmation(String? value) {
@@ -190,16 +207,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: _validateRequired,
                         ),
                         SizedBox(height: AppSpacing.fieldGap),
-                        AuthTextFieldWidget(
-                          label: 'Mot de passe',
-                          hint: '•••••••',
+                        PasswordCompositionWidget(
                           controller: _passwordController,
-                          obscureText: true,
+                          password: _passwordController.text,
                           hasError: _hasPasswordMismatch,
-                          validator: validatePassword,
+                          validator: _validateRegistrationPassword,
                         ),
                         SizedBox(height: AppSpacing.fieldGap),
                         AuthTextFieldWidget(
+                          key: const Key('register-password-confirmation'),
                           label: 'Confirmation du mot de passe',
                           hint: '•••••••',
                           controller: _passwordConfirmationController,
@@ -207,8 +223,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hasError: _hasPasswordMismatch,
                           autovalidate: false,
                           errorText: _hasPasswordMismatch
-                            ? _passwordMismatchMessage
-                            : null,
+                              ? _passwordMismatchMessage
+                              : null,
                           validator: _validatePasswordConfirmation,
                         ),
                         SizedBox(height: AppSpacing.xxxl),
@@ -218,7 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           child: AuthPrimaryButtonWidget(
                             label: 'Inscription',
-                            onPressed: _hasPasswordMismatch ? null : _submit,
+                            onPressed: _canSubmit ? _submit : null,
                           ),
                         ),
                       ],
