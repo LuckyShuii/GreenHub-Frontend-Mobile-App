@@ -12,12 +12,14 @@ class AuthPrimaryButtonWidget extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.isInverted = false,
+    this.isLoading = false,
     super.key,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool isInverted;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +67,16 @@ class AuthPrimaryButtonWidget extends StatelessWidget {
                 borderSide,
               ),
             ),
-            child: Text(label),
+            child: isLoading
+                ? SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      color: foregroundColor,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Text(label),
           ),
         ),
       ),

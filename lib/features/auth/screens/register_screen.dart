@@ -8,6 +8,8 @@ import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/utils/no_overscroll_scroll_behavior.dart';
 import '../../../shared/widgets/auth_text_field_widget.dart';
+import '../data/auth_api_service.dart';
+import '../data/models/register_request.dart';
 import '../theme/auth_sizes.dart';
 import '../utils/password_policy.dart';
 import '../widgets/auth_back_button_widget.dart';
@@ -16,7 +18,9 @@ import '../widgets/password_composition_widget.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  const RegisterScreen({this.authApiService, super.key});
+
+  final AuthApiService? authApiService;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -35,11 +39,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmationController =
       TextEditingController();
+  late final AuthApiService _authApiService;
   bool _hasPasswordMismatch = false;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
+    _authApiService = widget.authApiService ?? AuthApiService();
     _passwordController.addListener(_updatePasswordState);
     _passwordConfirmationController.addListener(_updatePasswordState);
   }
@@ -58,14 +65,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Inscription simulée avec succès.')),
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    final RegisterRequest request = RegisterRequest(
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      email: _emailController.text,
+      username: _usernameController.text,
+      location: _locationController.text,
+      password: _passwordController.text,
     );
+
+    try {
+      await _authApiService.register(request);
+      if (!mounted) {
+        return;
+      }
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Inscription réussie'),
+          content: const Text(
+            'Votre compte a été créé. Vous pouvez maintenant vous connecter.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Continuer'),
+            ),
+          ],
+        ),
+      );
+      if (mounted) {
+        context.go(AppRoutes.login);
+      }
+    } on AuthApiException catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.message)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
   }
 
   void _goBack() {
@@ -202,9 +255,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(height: AppSpacing.fieldGap),
                         AuthTextFieldWidget(
                           label: 'Localisation',
-                          hint: 'Localisation*',
+                          hint: 'Localisation',
                           controller: _locationController,
-                          validator: _validateRequired,
                         ),
                         SizedBox(height: AppSpacing.fieldGap),
                         PasswordCompositionWidget(
@@ -234,7 +286,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           child: AuthPrimaryButtonWidget(
                             label: 'Inscription',
-                            onPressed: _canSubmit ? _submit : null,
+                            isLoading: _isSubmitting,
+                            onPressed: _canSubmit && !_isSubmitting
+                                ? _submit
+                                : null,
                           ),
                         ),
                       ],
