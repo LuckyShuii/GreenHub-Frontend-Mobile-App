@@ -1,13 +1,16 @@
+import 'app_sizes.dart';
+
 class AppRadii {
   // Rayon petit (champs de saisie)
-  static const double sm = 8;
+  static final double sm = toRem(0.5);
+  static final double field = toRem(1.125);
 
   // Rayon moyen (boutons)
-  static const double md = 16;
+  static final double md = toRem(1);
 
   // Rayon grand (cartes)
-  static const double lg = 22;
+  static final double lg = toRem(1.375);
 
   // Rayon circulaire (pill)
-  static const double pill = 999;
+  static final double pill = toRem(62.5);
 }

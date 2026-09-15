@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 class AppShadows {
+  static const List<BoxShadow> field = <BoxShadow>[
+    BoxShadow(color: AppColors.o100, offset: Offset(2, 3)),
+  ];
+
+  static const List<BoxShadow> errorField = <BoxShadow>[
+    BoxShadow(color: AppColors.erreur, offset: Offset(2, 3)),
+  ];
+
+  static const List<BoxShadow> primaryButton = <BoxShadow>[
+    BoxShadow(color: Color(0x40000000), offset: Offset(2, 3)),
+  ];
+
   // Petite ombre (-2-3-8)
   static const List<BoxShadow> sm = <BoxShadow>[
     BoxShadow(

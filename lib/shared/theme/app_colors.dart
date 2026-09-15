@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static const Color transparent = Color(0x00000000);
+
   // Vert Greener - Primaire
   static const Color v900 = Color(0xFF1C443B);
   static const Color v700 = Color(0xFF2F6B46);
@@ -8,12 +10,14 @@ class AppColors {
   static const Color v300 = Color(0xFF8B9B82);
   static const Color v100 = Color(0xFFD7E0CF);
   static const Color v50 = Color(0xFFEEF2E9);
+  static const Color v650 = Color(0xFF2D6C47);
 
   // Neutre Olive - surfaces et texte
   static const Color o900 = Color(0xFF23291F);
   static const Color o700 = Color(0xFF3C4239);
   static const Color o500 = Color(0xFF6F766A);
   static const Color o300 = Color(0xFFB9BDB2);
+  static const Color o40 = Color(0xFFF4F5F0);
   static const Color o100 = Color(0xFFE2E4DF);
   static const Color o50 = Color(0xFFF4F5F1);
 
