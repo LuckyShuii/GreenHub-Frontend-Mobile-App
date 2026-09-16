@@ -63,10 +63,7 @@ class MaterialChipWidget extends StatelessWidget {
       onSelected: (_) => onPressed?.call(),
       backgroundColor: Colors.white,
       selectedColor: materialType.color,
-      side: BorderSide(
-        color: materialType.color,
-        width: isSelected ? 0 : 1.5,
-      ),
+      side: BorderSide(color: materialType.color, width: isSelected ? 0 : 1.5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadii.md),
       ),

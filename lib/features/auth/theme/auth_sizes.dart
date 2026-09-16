@@ -5,12 +5,18 @@ class AuthSizes {
   static final double contentMaxWidthMobile = toRem(24.5625);
   static final double contentMaxWidthTablet = toRem(32);
 
-  static final double registerContentPadding = toRem(0.875);
-  static final double registerTopPadding = toRem(0.75);
-  static final double registerTitleInset = toRem(0.125);
-  static final double registerButtonHorizontalInset = toRem(0.625);
-  static final double registerBackButtonSize = toRem(3.75);
-  static final double registerBackIconSize = toRem(0.9375);
+  static final double formContentPadding = toRem(0.875);
+  static final double formTopPadding = toRem(0.75);
+  static final double formTitleTopSpacing = toRem(2.25);
+  static final double loginFormTopSpacing = toRem(3.25);
+  static final double formTitleInset = toRem(0.125);
+  static final double formButtonHorizontalInset = toRem(0.625);
+  static final double backButtonSize = toRem(3.75);
+  static final double backIconSize = toRem(0.9375);
+
+  static final double loginSeparatorLineWidth = toRem(10.0625);
+  static final double loginSeparatorTextWidth = toRem(2.6875);
+  static final double forgotPasswordActionGap = toRem(0.5);
 
   static final double landingHorizontalPadding = toRem(1.5);
   static final double landingHorizontalPaddingTablet = toRem(2.5);

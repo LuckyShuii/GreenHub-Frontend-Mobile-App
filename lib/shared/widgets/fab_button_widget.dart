@@ -35,13 +35,7 @@ class FABButtonWidget extends StatelessWidget {
         child: InkWell(
           onTap: onPressed,
           borderRadius: BorderRadius.circular(size / 2),
-          child: Center(
-            child: Icon(
-              icon,
-              color: foregroundColor,
-              size: 24,
-            ),
-          ),
+          child: Center(child: Icon(icon, color: foregroundColor, size: 24)),
         ),
       ),
     );
