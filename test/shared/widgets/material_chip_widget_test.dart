@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_frontend/shared/widgets/material_chip_widget.dart' as chip;
+import 'package:flutter_frontend/shared/widgets/material_chip_widget.dart'
+    as chip;
 
 void main() {
   group('MaterialChipWidget', () {
-    testWidgets('renders with material type label', (WidgetTester tester) async {
+    testWidgets('renders with material type label', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -20,7 +23,9 @@ void main() {
       expect(find.byType(FilterChip), findsOneWidget);
     });
 
-    testWidgets('renders all material types correctly', (WidgetTester tester) async {
+    testWidgets('renders all material types correctly', (
+      WidgetTester tester,
+    ) async {
       final materialTypes = [
         chip.MaterialType.verre,
         chip.MaterialType.plastique,
@@ -81,7 +86,9 @@ void main() {
       expect(filterChip.selected, true);
     });
 
-    testWidgets('shows unselected state correctly', (WidgetTester tester) async {
+    testWidgets('shows unselected state correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -125,14 +132,18 @@ void main() {
       expect(isSelected, true);
     });
 
-    testWidgets('all material types have correct colors', (WidgetTester tester) async {
+    testWidgets('all material types have correct colors', (
+      WidgetTester tester,
+    ) async {
       expect(chip.MaterialType.verre.color, isNotNull);
       expect(chip.MaterialType.plastique.color, isNotNull);
       expect(chip.MaterialType.carton.color, isNotNull);
       expect(chip.MaterialType.metal.color, isNotNull);
     });
 
-    testWidgets('all material types have correct labels', (WidgetTester tester) async {
+    testWidgets('all material types have correct labels', (
+      WidgetTester tester,
+    ) async {
       expect(chip.MaterialType.verre.label, 'Verre');
       expect(chip.MaterialType.plastique.label, 'Plastique');
       expect(chip.MaterialType.carton.label, 'Carton');
