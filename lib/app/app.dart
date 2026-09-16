@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../shared/theme/app_theme.dart';
+import '../shared/widgets/app_notification_host_widget.dart';
 import 'router.dart';
 
 class GreenHubApp extends StatelessWidget {
@@ -13,6 +14,9 @@ class GreenHubApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: appRouter,
+      builder: (BuildContext context, Widget? child) {
+        return AppNotificationHost(child: child ?? const SizedBox.shrink());
+      },
     );
   }
 }

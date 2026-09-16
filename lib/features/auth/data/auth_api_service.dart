@@ -16,15 +16,13 @@ class AuthApiException implements Exception {
 }
 
 class AuthApiService {
-  AuthApiService({
-    String? baseUrl,
-    http.Client? client,
-  })  : _baseUrl = (baseUrl ?? _defaultBaseUrl).replaceFirst(RegExp(r'/$'), ''),
-        _client = client ?? http.Client();
+  AuthApiService({String? baseUrl, http.Client? client})
+    : _baseUrl = (baseUrl ?? _defaultBaseUrl).replaceFirst(RegExp(r'/$'), ''),
+      _client = client ?? http.Client();
 
   static const String _defaultBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:8000',
+    defaultValue: 'http://10.0.2.2:8000',
   );
 
   final String _baseUrl;
@@ -52,8 +50,8 @@ class AuthApiService {
       }
 
       if (response.statusCode == 409) {
-        throw const AuthApiException(
-          'Cette adresse e-mail est déjà utilisée.',
+        throw AuthApiException(
+          _errorMessage(decodedBody, fallback: 'Ce compte existe déjà.'),
           statusCode: 409,
         );
       }
@@ -91,5 +89,12 @@ class AuthApiService {
       }
     }
     return 'Les données saisies sont invalides.';
+  }
+
+  String _errorMessage(dynamic body, {required String fallback}) {
+    if (body is Map<String, dynamic> && body['detail'] is String) {
+      return body['detail'] as String;
+    }
+    return fallback;
   }
 }

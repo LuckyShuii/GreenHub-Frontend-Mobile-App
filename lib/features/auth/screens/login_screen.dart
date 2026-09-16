@@ -5,6 +5,7 @@ import '../../../app/router.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/theme/app_text_styles.dart';
+import '../../../shared/widgets/app_notification_host_widget.dart';
 import '../../../shared/widgets/auth_text_field_widget.dart';
 import '../theme/auth_sizes.dart';
 import '../widgets/auth_primary_button_widget.dart';
@@ -33,9 +34,9 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Connexion simulée avec succès.')),
-    );
+    AppNotificationHost.of(
+      context,
+    ).showSuccess('Connexion simulée avec succès.');
   }
 
   @override
@@ -139,8 +140,9 @@ class AuthFormScaffold extends StatelessWidget {
                       onPressed: onSubmit,
                     ),
                     SizedBox(height: AppSpacing.lg),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: <Widget>[
                         Text(prompt, style: AppTextStyles.bodySmall),
                         TextButton(
