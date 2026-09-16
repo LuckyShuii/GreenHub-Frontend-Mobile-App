@@ -1,12 +1,14 @@
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/screens/landing_screen.dart';
+import '../features/auth/screens/forgot_password_screen.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/register_screen.dart';
 
 class AppRoutes {
   static const String landing = '/';
   static const String login = '/login';
+  static const String forgotPassword = '/forgot-password';
   static const String register = '/register';
 }
 
@@ -20,6 +22,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.login,
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.forgotPassword,
+      builder: (context, state) => const ForgotPasswordScreen(),
     ),
     GoRoute(
       path: AppRoutes.register,
