@@ -3,10 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
+import '../../../shared/services/app_notification_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/theme/app_text_styles.dart';
+import '../../../shared/theme/app_sizes.dart';
 import '../../../shared/utils/no_overscroll_scroll_behavior.dart';
+import '../../../shared/widgets/app_notification_host_widget.dart';
 import '../../../shared/widgets/auth_text_field_widget.dart';
 import '../data/auth_api_service.dart';
 import '../data/models/register_request.dart';
@@ -16,6 +19,8 @@ import '../widgets/auth_back_button_widget.dart';
 import '../widgets/auth_primary_button_widget.dart';
 import '../widgets/password_composition_widget.dart';
 import 'login_screen.dart';
+
+enum _RegisterApiErrorField { email, username }
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({this.authApiService, super.key});
@@ -39,9 +44,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmationController =
       TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _usernameFocusNode = FocusNode();
+  final GlobalKey _emailFieldKey = GlobalKey();
+  final GlobalKey _usernameFieldKey = GlobalKey();
   late final AuthApiService _authApiService;
   bool _hasPasswordMismatch = false;
   bool _isSubmitting = false;
+  bool _hasEmailApiError = false;
+  bool _hasUsernameApiError = false;
 
   @override
   void initState() {
@@ -49,6 +61,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _authApiService = widget.authApiService ?? AuthApiService();
     _passwordController.addListener(_updatePasswordState);
     _passwordConfirmationController.addListener(_updatePasswordState);
+    _emailController.addListener(_clearEmailApiError);
+    _usernameController.addListener(_clearUsernameApiError);
   }
 
   @override
@@ -60,8 +74,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _locationController.dispose();
     _passwordController.removeListener(_updatePasswordState);
     _passwordConfirmationController.removeListener(_updatePasswordState);
+    _emailController.removeListener(_clearEmailApiError);
+    _usernameController.removeListener(_clearUsernameApiError);
     _passwordController.dispose();
     _passwordConfirmationController.dispose();
+    _scrollController.dispose();
+    _emailFocusNode.dispose();
+    _usernameFocusNode.dispose();
     super.dispose();
   }
 
@@ -72,6 +91,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     setState(() {
       _isSubmitting = true;
+      _hasEmailApiError = false;
+      _hasUsernameApiError = false;
     });
 
     final RegisterRequest request = RegisterRequest(
@@ -88,29 +109,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (!mounted) {
         return;
       }
-      await showDialog<void>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Inscription réussie'),
-          content: const Text(
-            'Votre compte a été créé. Vous pouvez maintenant vous connecter.',
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Continuer'),
-            ),
-          ],
-        ),
+      AppNotificationHost.of(context).showSuccess(
+        'Votre compte a été créé. Vous pouvez maintenant vous connecter.',
       );
-      if (mounted) {
-        context.go(AppRoutes.login);
-      }
+      context.go(AppRoutes.login);
     } on AuthApiException catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.message)),
-        );
+        AppNotificationHost.of(context).showError(error.message);
+        _applyApiError(error.message);
       }
     } finally {
       if (mounted) {
@@ -138,6 +144,107 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       _hasPasswordMismatch = hasPasswordMismatch;
     });
+  }
+
+  void _clearEmailApiError() {
+    if (_hasEmailApiError && mounted) {
+      setState(() {
+        _hasEmailApiError = false;
+      });
+    }
+  }
+
+  void _clearUsernameApiError() {
+    if (_hasUsernameApiError && mounted) {
+      setState(() {
+        _hasUsernameApiError = false;
+      });
+    }
+  }
+
+  void _applyApiError(String message) {
+    final String normalizedMessage = message.toLowerCase();
+    final _RegisterApiErrorField? field =
+        normalizedMessage.contains('e-mail') ||
+            normalizedMessage.contains('email')
+        ? _RegisterApiErrorField.email
+        : normalizedMessage.contains('pseudonyme')
+        ? _RegisterApiErrorField.username
+        : null;
+
+    if (field == null) {
+      return;
+    }
+
+    setState(() {
+      _hasEmailApiError = field == _RegisterApiErrorField.email;
+      _hasUsernameApiError = field == _RegisterApiErrorField.username;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _focusAndScrollToApiError(field);
+      }
+    });
+  }
+
+  Future<void> _focusAndScrollToApiError(_RegisterApiErrorField field) async {
+    final FocusNode focusNode = field == _RegisterApiErrorField.email
+        ? _emailFocusNode
+        : _usernameFocusNode;
+    final GlobalKey fieldKey = field == _RegisterApiErrorField.email
+        ? _emailFieldKey
+        : _usernameFieldKey;
+    final BuildContext? fieldContext = fieldKey.currentContext;
+
+    if (fieldContext == null || !_scrollController.hasClients) {
+      return;
+    }
+
+    final RenderObject? renderObject = fieldContext.findRenderObject();
+    if (renderObject is! RenderBox) {
+      return;
+    }
+
+    final AppNotificationService notificationService = AppNotificationHost.of(
+      context,
+    );
+    final int visibleCount = notificationService.visibleNotifications.length;
+    final double notificationHeight = toRem(3.75);
+    final double notificationGap = AppSpacing.xs;
+    final double notificationStackHeight = visibleCount == 0
+        ? 0
+        : visibleCount * notificationHeight +
+              (visibleCount - 1) * notificationGap;
+    final double notificationBottom =
+        MediaQuery.paddingOf(context).top +
+        AppSpacing.sm +
+        notificationStackHeight +
+        AppSpacing.sm;
+    final double desiredFieldTop = notificationBottom + AppSpacing.sm;
+    final double fieldTop = renderObject.localToGlobal(Offset.zero).dy;
+    final double targetOffset =
+        (_scrollController.offset + fieldTop - desiredFieldTop).clamp(
+          _scrollController.position.minScrollExtent,
+          _scrollController.position.maxScrollExtent,
+        );
+
+    await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+    if (!mounted) {
+      return;
+    }
+    focusNode.requestFocus();
+    if ((targetOffset - _scrollController.offset).abs() > 0.5) {
+      await _scrollController.animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    if (!mounted) {
+      return;
+    }
   }
 
   bool get _canSubmit {
@@ -186,6 +293,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: ScrollConfiguration(
                 behavior: const NoOverscrollScrollBehavior(),
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   padding: EdgeInsets.fromLTRB(
                     AuthSizes.registerContentPadding,
                     AuthSizes.registerTopPadding,
@@ -238,19 +346,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: _validateRequired,
                         ),
                         SizedBox(height: AppSpacing.fieldGap),
-                        AuthTextFieldWidget(
-                          label: 'Email',
-                          hint: 'Email*',
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: validateEmail,
+                        Container(
+                          key: _emailFieldKey,
+                          child: AuthTextFieldWidget(
+                            key: const Key('register-email-field'),
+                            label: 'Email',
+                            hint: 'Email*',
+                            controller: _emailController,
+                            focusNode: _emailFocusNode,
+                            hasError: _hasEmailApiError,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: validateEmail,
+                          ),
                         ),
                         SizedBox(height: AppSpacing.fieldGap),
-                        AuthTextFieldWidget(
-                          label: 'Pseudonyme',
-                          hint: 'Pseudonyme*',
-                          controller: _usernameController,
-                          validator: _validateRequired,
+                        Container(
+                          key: _usernameFieldKey,
+                          child: AuthTextFieldWidget(
+                            key: const Key('register-username-field'),
+                            label: 'Pseudonyme',
+                            hint: 'Pseudonyme*',
+                            controller: _usernameController,
+                            focusNode: _usernameFocusNode,
+                            hasError: _hasUsernameApiError,
+                            validator: _validateRequired,
+                          ),
                         ),
                         SizedBox(height: AppSpacing.fieldGap),
                         AuthTextFieldWidget(

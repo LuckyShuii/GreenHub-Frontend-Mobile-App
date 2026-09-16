@@ -16,6 +16,7 @@ class AuthTextFieldWidget extends StatelessWidget {
     this.hasError = false,
     this.errorText,
     this.autovalidate = true,
+    this.focusNode,
     this.keyboardType,
     this.validator,
     super.key,
@@ -28,6 +29,7 @@ class AuthTextFieldWidget extends StatelessWidget {
   final bool hasError;
   final String? errorText;
   final bool autovalidate;
+  final FocusNode? focusNode;
   final TextInputType? keyboardType;
   final String? Function(String? value)? validator;
 
@@ -59,6 +61,7 @@ class AuthTextFieldWidget extends StatelessWidget {
                 ? AutovalidateMode.onUserInteraction
                 : AutovalidateMode.disabled,
             controller: controller,
+            focusNode: focusNode,
             keyboardType: keyboardType,
             obscureText: obscureText,
             validator: validator,
@@ -73,9 +76,7 @@ class AuthTextFieldWidget extends StatelessWidget {
                 horizontal: AppSpacing.inputHorizontal,
                 vertical: AppSpacing.inputVertical,
               ),
-              constraints: BoxConstraints(
-                minHeight: AppSizes.inputFieldHeight,
-              ),
+              constraints: BoxConstraints(minHeight: AppSizes.inputFieldHeight),
               border: border,
               enabledBorder: border,
               focusedBorder: border.copyWith(
