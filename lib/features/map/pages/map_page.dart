@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/features/map/models/velib_station.dart';
 import 'package:flutter_frontend/features/map/services/map_manager.dart';
+import 'package:flutter_frontend/features/map/services/velib_manager.dart';
 import 'package:flutter_frontend/shared/shared.dart';
+import 'package:flutter_frontend/shared/utils/responsive_utils.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,6 +18,10 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
   final MapManager _mapManager = MapManager();
+  final VelibManager _velibManager = VelibManager();
+
+  List<VelibStation> _stations = [];
+  bool _isLoadingStations = false;
 
   @override
   void initState() {
@@ -24,8 +31,40 @@ class _MapPageState extends State<MapPage> {
       if (position == null) {
         return;
       }
-      _mapController.move(position['latlng'], position['zoom']);
+      final latLng = position['latlng'] as LatLng;
+      final zoom = position['zoom'] as double;
+
+      _mapController.move(latLng, zoom);
     });
+  }
+
+  Future<void> _loadVelibStations() async {
+    if (_isLoadingStations) return;
+
+    setState(() {
+      _isLoadingStations = true;
+    });
+
+    try {
+      final bounds = _mapController.camera.visibleBounds;
+      final stations = await _velibManager.getStations(
+        topLeft: bounds.northWest,
+        bottomRight: bounds.southEast,
+        referencePoint: _mapController.camera.center,
+        limit: 10,
+      );
+      if (!mounted) return;
+      setState(() {
+        _stations = stations;
+      });
+    } catch (e) {
+      debugPrint('Erreur chargement Vélib: $e');
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingStations = false;
+      });
+    }
   }
 
   @override
@@ -51,9 +90,24 @@ class _MapPageState extends State<MapPage> {
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=$mapTilerKey',
-                userAgentPackageName: 'com.example.mon_app'
-              )
+                urlTemplate:
+                    'https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=$mapTilerKey',
+                userAgentPackageName: 'com.example.mon_app',
+              ),
+              MarkerLayer(
+                markers: _stations.map((station) {
+                  return Marker(
+                    point: station.position,
+                    width: 40,
+                    height: 40,
+                    child: const Icon(
+                      Icons.pedal_bike,
+                      color: Colors.blue,
+                      size: 30,
+                    ),
+                  );
+                }).toList(),
+              ),
             ],
           ),
           Positioned(
