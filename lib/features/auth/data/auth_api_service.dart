@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'models/auth_tokens.dart';
+import 'models/login_request.dart';
 import 'models/register_request.dart';
 import 'models/user_response.dart';
 
@@ -28,47 +30,86 @@ class AuthApiService {
   final String _baseUrl;
   final http.Client _client;
 
-  Future<UserResponse> register(RegisterRequest request) async {
-    final Uri uri = Uri.parse('$_baseUrl/api/auth/register');
+  Future<UserResponse> register(RegisterRequest request) {
+    return _call(
+      () => _postJson('/api/auth/register', request.toJson()),
+      (int statusCode, dynamic body) {
+        if (statusCode == 201) {
+          return UserResponse.fromJson(body as Map<String, dynamic>);
+        }
+        throw _failure(statusCode, body);
+      },
+    );
+  }
 
-    try {
-      final http.Response response = await _client.post(
-        uri,
+  Future<AuthTokens> login(LoginRequest request) {
+    return _call(
+      () => _postJson('/api/auth/login', request.toJson()),
+      _parseTokens,
+    );
+  }
+
+  Future<AuthTokens> refresh(String refreshToken, {String? deviceInfo}) {
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'refresh_token': refreshToken,
+    };
+    if (deviceInfo != null) {
+      payload['device_info'] = deviceInfo;
+    }
+    return _call(
+      () => _postJson('/api/auth/refresh', payload),
+      _parseTokens,
+    );
+  }
+
+  Future<void> logout(String refreshToken) {
+    return _call(
+      () => _postJson('/api/auth/logout', <String, dynamic>{
+        'refresh_token': refreshToken,
+      }),
+      (int statusCode, dynamic body) {
+        if (statusCode != 204) {
+          throw _failure(statusCode, body);
+        }
+      },
+    );
+  }
+
+  Future<UserResponse> fetchCurrentUser(String accessToken) {
+    return _call(
+      () => _client.get(
+        _uri('/api/auth/me'),
         headers: <String, String>{
-          'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
-        body: jsonEncode(request.toJson()),
-      );
+      ),
+      (int statusCode, dynamic body) {
+        if (statusCode == 200) {
+          return UserResponse.fromJson(body as Map<String, dynamic>);
+        }
+        throw _failure(statusCode, body);
+      },
+    );
+  }
 
+  AuthTokens _parseTokens(int statusCode, dynamic body) {
+    if (statusCode == 200) {
+      return AuthTokens.fromJson(body as Map<String, dynamic>);
+    }
+    throw _failure(statusCode, body);
+  }
+
+  Future<T> _call<T>(
+    Future<http.Response> Function() send,
+    T Function(int statusCode, dynamic body) handle,
+  ) async {
+    try {
+      final http.Response response = await send();
       final dynamic decodedBody = response.body.isEmpty
           ? null
           : jsonDecode(response.body);
-
-      if (response.statusCode == 201) {
-        return UserResponse.fromJson(decodedBody as Map<String, dynamic>);
-      }
-
-      if (response.statusCode == 409) {
-        throw AuthApiException(
-          _errorMessage(decodedBody, fallback: 'Ce compte existe déjà.'),
-          statusCode: 409,
-        );
-      }
-
-      if (response.statusCode == 422) {
-        throw AuthApiException(
-          _validationMessage(decodedBody),
-          statusCode: 422,
-        );
-      }
-
-      throw AuthApiException(
-        'Le serveur a retourné une erreur inattendue.',
-        statusCode: response.statusCode,
-      );
-    } on AuthApiException {
-      rethrow;
+      return handle(response.statusCode, decodedBody);
     } on FormatException {
       throw const AuthApiException('Réponse invalide du serveur.');
     } on http.ClientException {
@@ -76,6 +117,29 @@ class AuthApiService {
         'Impossible de contacter le serveur. Vérifiez votre connexion.',
       );
     }
+  }
+
+  Future<http.Response> _postJson(String path, Map<String, dynamic> body) {
+    return _client.post(
+      _uri(path),
+      headers: const <String, String>{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+  }
+
+  Uri _uri(String path) => Uri.parse('$_baseUrl$path');
+
+  AuthApiException _failure(int statusCode, dynamic body) {
+    final String message = switch (statusCode) {
+      401 => _errorMessage(body, fallback: 'Authentification refusée.'),
+      409 => _errorMessage(body, fallback: 'Ce compte existe déjà.'),
+      422 => _validationMessage(body),
+      _ => 'Le serveur a retourné une erreur inattendue.',
+    };
+    return AuthApiException(message, statusCode: statusCode);
   }
 
   String _validationMessage(dynamic body) {
