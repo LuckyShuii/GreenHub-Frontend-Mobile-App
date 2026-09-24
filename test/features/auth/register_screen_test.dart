@@ -350,7 +350,7 @@ class _SuccessfulAuthApiService extends AuthApiService {
   @override
   Future<UserResponse> register(RegisterRequest request) async {
     return UserResponse(
-      id: 1,
+      id: '00000000-0000-0000-0000-000000000001',
       firstName: request.firstName,
       lastName: request.lastName,
       email: request.email,
