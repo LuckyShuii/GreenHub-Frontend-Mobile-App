@@ -8,10 +8,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: FABButtonWidget(
-              icon: Icons.add,
-              onPressed: () {},
-            ),
+            body: FABButtonWidget(icon: Icons.add, onPressed: () {}),
           ),
         ),
       );
@@ -44,10 +41,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: FABButtonWidget(
-              icon: Icons.add,
-              onPressed: () {},
-            ),
+            body: FABButtonWidget(icon: Icons.add, onPressed: () {}),
           ),
         ),
       );
@@ -61,10 +55,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: FABButtonWidget(
-              icon: Icons.add,
-              onPressed: () {},
-            ),
+            body: FABButtonWidget(icon: Icons.add, onPressed: () {}),
           ),
         ),
       );
@@ -117,10 +108,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: FABButtonWidget(
-              icon: Icons.add,
-              onPressed: () {},
-            ),
+            body: FABButtonWidget(icon: Icons.add, onPressed: () {}),
           ),
         ),
       );
@@ -134,11 +122,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: FABButtonWidget(
-              icon: Icons.add,
-              onPressed: () {},
-              size: 64,
-            ),
+            body: FABButtonWidget(icon: Icons.add, onPressed: () {}, size: 64),
           ),
         ),
       );
@@ -150,10 +134,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: FABButtonWidget(
-              icon: Icons.add,
-              onPressed: () {},
-            ),
+            body: FABButtonWidget(icon: Icons.add, onPressed: () {}),
           ),
         ),
       );
@@ -168,10 +149,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: FABButtonWidget(
-              icon: Icons.edit,
-              onPressed: () {},
-            ),
+            body: FABButtonWidget(icon: Icons.edit, onPressed: () {}),
           ),
         ),
       );
@@ -180,17 +158,16 @@ void main() {
       expect(icon.size, 24);
     });
 
-    testWidgets('renders multiple icons correctly', (WidgetTester tester) async {
+    testWidgets('renders multiple icons correctly', (
+      WidgetTester tester,
+    ) async {
       final icons = [Icons.add, Icons.edit, Icons.delete, Icons.search];
 
       for (final icon in icons) {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: FABButtonWidget(
-                icon: icon,
-                onPressed: () {},
-              ),
+              body: FABButtonWidget(icon: icon, onPressed: () {}),
             ),
           ),
         );

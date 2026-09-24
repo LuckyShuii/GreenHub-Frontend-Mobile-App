@@ -25,21 +25,21 @@ class AuthPrimaryButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDisabled = onPressed == null;
     final Color backgroundColor = isDisabled
-      ? AppColors.o300
-      : isInverted
-      ? AppColors.v50
-      : AppColors.v650;
+        ? AppColors.o300
+        : isInverted
+        ? AppColors.v50
+        : AppColors.v650;
     final Color foregroundColor = isDisabled
-      ? AppColors.o500
-      : isInverted
-      ? AppColors.v650
-      : AppColors.o40;
+        ? AppColors.o500
+        : isInverted
+        ? AppColors.v650
+        : AppColors.o40;
     final BorderSide borderSide = isDisabled
-      ? BorderSide(
-        color: AppColors.o500,
-        width: AppSizes.disabledButtonBorderWidth,
-        )
-      : BorderSide.none;
+        ? BorderSide(
+            color: AppColors.o500,
+            width: AppSizes.disabledButtonBorderWidth,
+          )
+        : BorderSide.none;
 
     return Semantics(
       button: true,
@@ -62,11 +62,7 @@ class AuthPrimaryButtonWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadii.md),
               ),
               textStyle: AuthTextStyles.action,
-            ).copyWith(
-              side: WidgetStatePropertyAll<BorderSide?>(
-                borderSide,
-              ),
-            ),
+            ).copyWith(side: WidgetStatePropertyAll<BorderSide?>(borderSide)),
             child: isLoading
                 ? SizedBox(
                     height: 20,

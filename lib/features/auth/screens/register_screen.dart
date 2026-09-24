@@ -4,21 +4,18 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../shared/services/app_notification_service.dart';
-import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_spacing.dart';
-import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/theme/app_sizes.dart';
-import '../../../shared/utils/no_overscroll_scroll_behavior.dart';
 import '../../../shared/widgets/app_notification_host_widget.dart';
 import '../../../shared/widgets/auth_text_field_widget.dart';
 import '../data/auth_api_service.dart';
 import '../data/models/register_request.dart';
 import '../theme/auth_sizes.dart';
 import '../utils/password_policy.dart';
-import '../widgets/auth_back_button_widget.dart';
+import '../widgets/auth_form_layout_widget.dart';
 import '../widgets/auth_primary_button_widget.dart';
 import '../widgets/password_composition_widget.dart';
-import 'login_screen.dart';
+import '../utils/auth_validators.dart';
 
 enum _RegisterApiErrorField { email, username }
 
@@ -278,149 +275,92 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: AppColors.o50,
-        systemNavigationBarColor: AppColors.o50,
-      ),
-      child: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: AuthSizes.contentMaxWidthMobile,
-              ),
-              child: ScrollConfiguration(
-                behavior: const NoOverscrollScrollBehavior(),
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  padding: EdgeInsets.fromLTRB(
-                    AuthSizes.registerContentPadding,
-                    AuthSizes.registerTopPadding,
-                    AuthSizes.registerContentPadding,
-                    AppSpacing.xl,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: AuthBackButtonWidget(onPressed: _goBack),
-                        ),
-                        SizedBox(height: AppSpacing.md),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AuthSizes.registerTitleInset,
-                          ),
-                          child: Text(
-                            'Création de votre\ncompte Green’Hub',
-                            style: AppTextStyles.formTitle,
-                          ),
-                        ),
-                        SizedBox(height: AppSpacing.md),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xs,
-                          ),
-                          child: Text(
-                            'Bienvenu dans l’écosystème !',
-                            style: AppTextStyles.formSubtitle,
-                          ),
-                        ),
-                        SizedBox(height: AppSpacing.xs),
-                        AuthTextFieldWidget(
-                          label: 'Prénom',
-                          hint: 'Prénom*',
-                          controller: _firstNameController,
-                          keyboardType: TextInputType.name,
-                          validator: _validateRequired,
-                        ),
-                        SizedBox(height: AppSpacing.fieldGap),
-                        AuthTextFieldWidget(
-                          label: 'Nom',
-                          hint: 'Nom*',
-                          controller: _lastNameController,
-                          keyboardType: TextInputType.name,
-                          validator: _validateRequired,
-                        ),
-                        SizedBox(height: AppSpacing.fieldGap),
-                        Container(
-                          key: _emailFieldKey,
-                          child: AuthTextFieldWidget(
-                            key: const Key('register-email-field'),
-                            label: 'Email',
-                            hint: 'Email*',
-                            controller: _emailController,
-                            focusNode: _emailFocusNode,
-                            hasError: _hasEmailApiError,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: validateEmail,
-                          ),
-                        ),
-                        SizedBox(height: AppSpacing.fieldGap),
-                        Container(
-                          key: _usernameFieldKey,
-                          child: AuthTextFieldWidget(
-                            key: const Key('register-username-field'),
-                            label: 'Pseudonyme',
-                            hint: 'Pseudonyme*',
-                            controller: _usernameController,
-                            focusNode: _usernameFocusNode,
-                            hasError: _hasUsernameApiError,
-                            validator: _validateRequired,
-                          ),
-                        ),
-                        SizedBox(height: AppSpacing.fieldGap),
-                        AuthTextFieldWidget(
-                          label: 'Localisation',
-                          hint: 'Localisation',
-                          controller: _locationController,
-                        ),
-                        SizedBox(height: AppSpacing.fieldGap),
-                        PasswordCompositionWidget(
-                          controller: _passwordController,
-                          password: _passwordController.text,
-                          hasError: _hasPasswordMismatch,
-                          validator: _validateRegistrationPassword,
-                        ),
-                        SizedBox(height: AppSpacing.fieldGap),
-                        AuthTextFieldWidget(
-                          key: const Key('register-password-confirmation'),
-                          label: 'Confirmation du mot de passe',
-                          hint: '•••••••',
-                          controller: _passwordConfirmationController,
-                          obscureText: true,
-                          hasError: _hasPasswordMismatch,
-                          autovalidate: false,
-                          errorText: _hasPasswordMismatch
-                              ? _passwordMismatchMessage
-                              : null,
-                          validator: _validatePasswordConfirmation,
-                        ),
-                        SizedBox(height: AppSpacing.xxxl),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AuthSizes.registerButtonHorizontalInset,
-                          ),
-                          child: AuthPrimaryButtonWidget(
-                            label: 'Inscription',
-                            isLoading: _isSubmitting,
-                            onPressed: _canSubmit && !_isSubmitting
-                                ? _submit
-                                : null,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+    return AuthFormLayoutWidget(
+      title: 'Création de votre\ncompte Green’Hub',
+      subtitle: 'Bienvenu dans l’écosystème !',
+      formKey: _formKey,
+      onBack: _goBack,
+      scrollController: _scrollController,
+      children: <Widget>[
+        AuthTextFieldWidget(
+          label: 'Prénom',
+          hint: 'Prénom*',
+          controller: _firstNameController,
+          keyboardType: TextInputType.name,
+          validator: _validateRequired,
+        ),
+        SizedBox(height: AppSpacing.fieldGap),
+        AuthTextFieldWidget(
+          label: 'Nom',
+          hint: 'Nom*',
+          controller: _lastNameController,
+          keyboardType: TextInputType.name,
+          validator: _validateRequired,
+        ),
+        SizedBox(height: AppSpacing.fieldGap),
+        Container(
+          key: _emailFieldKey,
+          child: AuthTextFieldWidget(
+            key: const Key('register-email-field'),
+            label: 'Email',
+            hint: 'Email*',
+            controller: _emailController,
+            focusNode: _emailFocusNode,
+            hasError: _hasEmailApiError,
+            keyboardType: TextInputType.emailAddress,
+            validator: validateEmail,
           ),
         ),
-      ),
+        SizedBox(height: AppSpacing.fieldGap),
+        Container(
+          key: _usernameFieldKey,
+          child: AuthTextFieldWidget(
+            key: const Key('register-username-field'),
+            label: 'Pseudonyme',
+            hint: 'Pseudonyme*',
+            controller: _usernameController,
+            focusNode: _usernameFocusNode,
+            hasError: _hasUsernameApiError,
+            validator: _validateRequired,
+          ),
+        ),
+        SizedBox(height: AppSpacing.fieldGap),
+        AuthTextFieldWidget(
+          label: 'Localisation',
+          hint: 'Localisation',
+          controller: _locationController,
+        ),
+        SizedBox(height: AppSpacing.fieldGap),
+        PasswordCompositionWidget(
+          controller: _passwordController,
+          password: _passwordController.text,
+          hasError: _hasPasswordMismatch,
+          validator: _validateRegistrationPassword,
+        ),
+        SizedBox(height: AppSpacing.fieldGap),
+        AuthTextFieldWidget(
+          key: const Key('register-password-confirmation'),
+          label: 'Confirmation du mot de passe',
+          hint: '•••••••',
+          controller: _passwordConfirmationController,
+          obscureText: true,
+          hasError: _hasPasswordMismatch,
+          autovalidate: false,
+          errorText: _hasPasswordMismatch ? _passwordMismatchMessage : null,
+          validator: _validatePasswordConfirmation,
+        ),
+        SizedBox(height: AppSpacing.xxxl),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AuthSizes.formButtonHorizontalInset,
+          ),
+          child: AuthPrimaryButtonWidget(
+            label: 'Inscription',
+            isLoading: _isSubmitting,
+            onPressed: _canSubmit && !_isSubmitting ? _submit : null,
+          ),
+        ),
+      ],
     );
   }
 }

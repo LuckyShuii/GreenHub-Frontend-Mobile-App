@@ -39,11 +39,7 @@ class ContentCardWidget extends StatelessWidget {
             if (icon != null)
               Padding(
                 padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                child: Icon(
-                  icon,
-                  color: AppColors.v700,
-                  size: 28,
-                ),
+                child: Icon(icon, color: AppColors.v700, size: 28),
               ),
             Text(
               title,

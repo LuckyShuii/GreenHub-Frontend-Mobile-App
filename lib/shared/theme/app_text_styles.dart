@@ -102,4 +102,44 @@ class AppTextStyles {
     fontFamily: bodyFontFamily,
     color: AppColors.erreur,
   );
+
+  static final TextStyle formLink = TextStyle(
+    fontSize: toRem(1.25),
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+    fontFamily: bodyFontFamily,
+    color: AppColors.v650,
+  );
+
+  static final TextStyle formSeparator = TextStyle(
+    fontSize: toRem(1),
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+    fontFamily: bodyFontFamily,
+    color: AppColors.o300,
+  );
+
+  static final TextStyle formPrompt = TextStyle(
+    fontSize: toRem(1.25),
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+    fontFamily: bodyFontFamily,
+    color: AppColors.o300,
+  );
+
+  static final TextStyle formPromptAction = TextStyle(
+    fontSize: toRem(1.25),
+    fontWeight: FontWeight.w800,
+    height: 1.2,
+    fontFamily: bodyFontFamily,
+    color: AppColors.v650,
+  );
+
+  static final TextStyle formFeedback = TextStyle(
+    fontSize: toRem(1.125),
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+    fontFamily: bodyFontFamily,
+    color: AppColors.erreur,
+  );
 }

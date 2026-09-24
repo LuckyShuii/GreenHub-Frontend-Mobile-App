@@ -4,7 +4,9 @@ import 'package:flutter_frontend/shared/widgets/content_card_widget.dart';
 
 void main() {
   group('ContentCardWidget', () {
-    testWidgets('renders with title and description', (WidgetTester tester) async {
+    testWidgets('renders with title and description', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -18,7 +20,10 @@ void main() {
       );
 
       expect(find.text('Tri des déchets'), findsOneWidget);
-      expect(find.text('Apprenez à trier correctement vos déchets'), findsOneWidget);
+      expect(
+        find.text('Apprenez à trier correctement vos déchets'),
+        findsOneWidget,
+      );
       expect(find.byType(ContentCardWidget), findsOneWidget);
     });
 
@@ -119,7 +124,8 @@ void main() {
     });
 
     testWidgets('truncates long title', (WidgetTester tester) async {
-      const longTitle = 'Ceci est un titre très long qui devrait être tronqué avec des points';
+      const longTitle =
+          'Ceci est un titre très long qui devrait être tronqué avec des points';
 
       await tester.pumpWidget(
         MaterialApp(
@@ -142,7 +148,8 @@ void main() {
     });
 
     testWidgets('truncates long description', (WidgetTester tester) async {
-      const longDesc = 'Ceci est une très longue description qui devrait être tronquée avec des points de suspension';
+      const longDesc =
+          'Ceci est une très longue description qui devrait être tronquée avec des points de suspension';
 
       await tester.pumpWidget(
         MaterialApp(
@@ -167,10 +174,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ContentCardWidget(
-              title: 'Test',
-              description: 'Description',
-            ),
+            body: ContentCardWidget(title: 'Test', description: 'Description'),
           ),
         ),
       );

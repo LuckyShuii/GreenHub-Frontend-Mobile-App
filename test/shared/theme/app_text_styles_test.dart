@@ -140,14 +140,22 @@ void main() {
     });
 
     test('font sizes are in descending order', () {
-      expect(AppTextStyles.display.fontSize,
-          greaterThan(AppTextStyles.title.fontSize!));
-      expect(AppTextStyles.title.fontSize,
-          greaterThan(AppTextStyles.subtitle.fontSize!));
-      expect(AppTextStyles.subtitle.fontSize,
-          greaterThan(AppTextStyles.body.fontSize!));
       expect(
-          AppTextStyles.body.fontSize, greaterThan(AppTextStyles.label.fontSize!));
+        AppTextStyles.display.fontSize,
+        greaterThan(AppTextStyles.title.fontSize!),
+      );
+      expect(
+        AppTextStyles.title.fontSize,
+        greaterThan(AppTextStyles.subtitle.fontSize!),
+      );
+      expect(
+        AppTextStyles.subtitle.fontSize,
+        greaterThan(AppTextStyles.body.fontSize!),
+      );
+      expect(
+        AppTextStyles.body.fontSize,
+        greaterThan(AppTextStyles.label.fontSize!),
+      );
     });
   });
 }

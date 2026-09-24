@@ -17,8 +17,8 @@ class AuthBackButtonWidget extends StatelessWidget {
       button: true,
       label: 'Retour',
       child: SizedBox(
-        height: AuthSizes.registerBackButtonSize,
-        width: AuthSizes.registerBackButtonSize,
+        height: AuthSizes.backButtonSize,
+        width: AuthSizes.backButtonSize,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: AppColors.o40,
@@ -34,8 +34,8 @@ class AuthBackButtonWidget extends StatelessWidget {
               child: Center(
                 child: SvgPicture.asset(
                   'assets/icons/back_chevron.svg',
-                  height: AuthSizes.registerBackIconSize,
-                  width: AuthSizes.registerBackIconSize,
+                  height: AuthSizes.backIconSize,
+                  width: AuthSizes.backIconSize,
                 ),
               ),
             ),

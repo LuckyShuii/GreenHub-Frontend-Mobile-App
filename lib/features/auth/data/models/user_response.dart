@@ -11,7 +11,7 @@ class UserResponse {
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     return UserResponse(
-      id: json['id'] as int,
+      id: json['id'] as String,
       firstName: json['prenom'] as String,
       lastName: json['nom'] as String,
       email: json['email'] as String,
@@ -21,7 +21,7 @@ class UserResponse {
     );
   }
 
-  final int id;
+  final String id;
   final String firstName;
   final String lastName;
   final String email;
