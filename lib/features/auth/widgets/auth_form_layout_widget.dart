@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,6 +10,13 @@ import '../../../shared/utils/no_overscroll_scroll_behavior.dart';
 import 'auth_back_button_widget.dart';
 import '../theme/auth_sizes.dart';
 
+class AuthFormNeverScrollablePhysics extends NeverScrollableScrollPhysics {
+  const AuthFormNeverScrollablePhysics({super.parent});
+
+  @override
+  bool get allowImplicitScrolling => true;
+}
+
 class AuthFormLayoutWidget extends StatelessWidget {
   const AuthFormLayoutWidget({
     required this.title,
@@ -17,6 +26,8 @@ class AuthFormLayoutWidget extends StatelessWidget {
     this.footer,
     this.subtitle,
     this.scrollController,
+    this.physics,
+    this.alignFooterToBottom = true,
     this.titleTopSpacing,
     this.formTopSpacing,
     super.key,
@@ -28,6 +39,8 @@ class AuthFormLayoutWidget extends StatelessWidget {
   final List<Widget> children;
   final List<Widget>? footer;
   final ScrollController? scrollController;
+  final ScrollPhysics? physics;
+  final bool alignFooterToBottom;
   final double? titleTopSpacing;
   final double? formTopSpacing;
 
@@ -50,17 +63,29 @@ class AuthFormLayoutWidget extends StatelessWidget {
                 behavior: const NoOverscrollScrollBehavior(),
                 child: LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
+                    final bool isCompactNonScrollable =
+                        physics != null && constraints.maxHeight < 700;
+                    final double topPadding = isCompactNonScrollable
+                      ? 0
+                      : AuthSizes.formTopPadding;
+                    final double verticalPadding =
+                      topPadding + AppSpacing.xl;
+
                     return SingleChildScrollView(
                       controller: scrollController,
+                      physics: physics,
                       padding: EdgeInsets.fromLTRB(
                         AuthSizes.formContentPadding,
-                        AuthSizes.formTopPadding,
+                        topPadding,
                         AuthSizes.formContentPadding,
                         AppSpacing.xl,
                       ),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
+                          minHeight: math.max(
+                            0,
+                            constraints.maxHeight - verticalPadding,
+                          ),
                         ),
                         child: Form(
                           key: formKey,
@@ -110,7 +135,8 @@ class AuthFormLayoutWidget extends StatelessWidget {
                                       CrossAxisAlignment.stretch,
                                   children: children,
                                 ),
-                                if (footer != null) const Spacer(),
+                                if (footer != null && alignFooterToBottom)
+                                  const Spacer(),
                                 if (footer != null)
                                   Column(
                                     crossAxisAlignment:

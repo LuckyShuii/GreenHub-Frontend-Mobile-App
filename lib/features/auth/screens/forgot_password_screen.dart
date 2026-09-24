@@ -47,6 +47,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           'Veuillez saisir votre email de connexion pour recevoir un lien afin de réinitialiser votre mot de passe',
       formKey: _formKey,
       onBack: _goBack,
+      physics: const AuthFormNeverScrollablePhysics(),
       titleTopSpacing: AuthSizes.formTitleTopSpacing,
       footer: <Widget>[
         SizedBox(height: AppSpacing.xxxl),
