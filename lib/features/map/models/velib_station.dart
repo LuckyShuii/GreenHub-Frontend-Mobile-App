@@ -1,6 +1,8 @@
+import 'package:flutter_frontend/features/map/models/map_marker_type.dart';
+import 'package:flutter_frontend/features/map/models/map_point.dart';
 import 'package:latlong2/latlong.dart';
 
-class VelibStation {
+class VelibStation implements MapPoint {
   final String name;
   final LatLng position;
   final int availableBikes;
@@ -16,6 +18,9 @@ class VelibStation {
     required this.electricBikes,
     required this.availableStands,
   });
+
+  @override
+  MapMarkerType get markerType => MapMarkerType.velib;
 
   factory VelibStation.fromJson(Map<String, dynamic> json) {
     final coordinates = json['coordonnees_geo'] as Map<String, dynamic>;
