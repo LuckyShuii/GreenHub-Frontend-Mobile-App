@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/features/map/models/velib_station.dart';
+import 'package:flutter_frontend/features/map/models/map_point.dart';
+import 'package:flutter_frontend/features/map/widgets/custom_map_marker.dart';
 import 'package:flutter_frontend/features/map/services/map_manager.dart';
+import 'package:flutter_frontend/features/map/services/ourecycler_manager.dart';
 import 'package:flutter_frontend/features/map/services/velib_manager.dart';
 import 'package:flutter_frontend/shared/shared.dart';
 import 'package:flutter_frontend/shared/utils/responsive_utils.dart';
@@ -19,9 +21,10 @@ class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
   final MapManager _mapManager = MapManager();
   final VelibManager _velibManager = VelibManager();
+  final OurecyclerManager _ourecyclerManager = OurecyclerManager();
 
-  List<VelibStation> _stations = [];
-  bool _isLoadingStations = false;
+  List<MapPoint> _stations = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -38,31 +41,46 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  Future<void> _loadVelibStations() async {
-    if (_isLoadingStations) return;
-
+  Future<void> _loader(String type) async {
+    if(_isLoading) return;
     setState(() {
-      _isLoadingStations = true;
+      _isLoading = true;
     });
-
+    final bounds = _mapController.camera.visibleBounds;
+    final center = _mapController.camera.center;
+    final Distance distance = Distance();
+    final radius = distance.as(LengthUnit.Kilometer, center, bounds.northEast).clamp(1, 50).toDouble();
     try {
-      final bounds = _mapController.camera.visibleBounds;
-      final stations = await _velibManager.getStations(
-        topLeft: bounds.northWest,
-        bottomRight: bounds.southEast,
-        referencePoint: _mapController.camera.center,
-        limit: 10,
-      );
-      if (!mounted) return;
+      List<MapPoint> stations;
+      switch (type) {
+        case 'velo':
+          stations = await _velibManager.getStations(
+              topLeft: bounds.northWest,
+              bottomRight: bounds.southEast,
+              referencePoint: center);
+          break;
+        default:
+          stations = await _ourecyclerManager.getCollectionPoints(
+              material: type,
+              latitude: center.latitude,
+              longitude: center.longitude,
+              radius: radius
+          );
+          break;
+      }
       setState(() {
         _stations = stations;
       });
-    } catch (e) {
-      debugPrint('Erreur chargement Vélib: $e');
-    } finally {
-      if (!mounted) return;
+      if(!mounted) return;
       setState(() {
-        _isLoadingStations = false;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Erreur de chargement des items: $e');
+    } finally {
+      if(!mounted) return;
+      setState(() {
+        _isLoading = false;
       });
     }
   }
@@ -100,10 +118,8 @@ class _MapPageState extends State<MapPage> {
                     point: station.position,
                     width: 40,
                     height: 40,
-                    child: const Icon(
-                      Icons.pedal_bike,
-                      color: Colors.blue,
-                      size: 30,
+                    child: CustomMapMarker(
+                      type: station.markerType
                     ),
                   );
                 }).toList(),
@@ -126,7 +142,7 @@ class _MapPageState extends State<MapPage> {
                 const SizedBox(height: 12),
                 FABButtonWidget(
                   icon: Icons.filter_alt_outlined,
-                  onPressed: _loadVelibStations,
+                  onPressed: () => _loader('verre'),
                 ),
               ],
             ),
