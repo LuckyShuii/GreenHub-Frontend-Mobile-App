@@ -122,3 +122,52 @@ Quand un nouveau widget est ajouté:
 2. Préciser ses paramètres publics.
 3. Indiquer où il est utilisé.
 4. Ajouter/mettre à jour les routes si applicable.
+
+## Accueil connecté
+
+La page d'accueil appartient à `lib/features/home/`. `HomeScreen` assemble les
+composants et branche la navigation; les widgets de présentation reçoivent des
+callbacks et ne dépendent ni de la session ni du routeur.
+
+| Composant | Fichier | Rôle et paramètres |
+|---|---|---|
+| `HomeScreen` | `lib/features/home/screens/home_screen.dart` | Reçoit `authSession`, charge le prénom une fois et ouvre les destinations protégées. |
+| `ContentCardWidget` | `lib/shared/widgets/content_card_widget.dart` | Carte partagée pour les légumes de saison, le guide de tri et la communauté. `title`, `description`, `onTap`, `icon` existants; options `leading`, `decoration`, `padding`, `titleStyle`, `descriptionStyle`, `textAlign`, `minHeight`, `bottomAligned`, `descriptionSpacing`. Les valeurs par défaut restent inchangées. |
+| `EcoProgressCardWidget` | `lib/features/home/widgets/eco_progress_card_widget.dart` | Carte verte avec les valeurs statiques de la maquette. Aucune gestion des niveaux ni requête API. |
+| `HomeBottomNavigationWidget` | `lib/features/home/widgets/home_bottom_navigation_widget.dart` | Reçoit `onMap` et `onScan` asynchrones, `destination` et `enabled`. Anime uniquement le rond vert et son ombre derrière les trois icônes fixes, qui restent visibles; les gestes courts ou annulés recentrent sans navigation. |
+| `HomeNavigationShellWidget` | `lib/features/home/widgets/home_navigation_shell_widget.dart` | Reçoit `child`, `destination`, les callbacks asynchrones et `isActive`. Porte une seule instance de la barre entre l'accueil, la carte et le scan; annule son temporisateur à chaque changement de destination ou destruction. |
+| `PageUnderConstructionScreen` | `lib/shared/screens/page_under_construction_screen.dart` | Écran partagé par les six destinations provisoires; reçoit `onBack` et affiche « Page en construction ⚙️ ». |
+
+Les tokens globaux restent dans `lib/shared/theme/`. Les variantes spécifiques
+à la maquette sont dans `lib/features/home/theme/`: `HomeColors`, `HomeSizes`,
+`HomeShadows` et `HomeTextStyles`. La police locale `HomeNunito` est réservée à
+l'accueil afin de conserver le rendu des autres écrans. Les icônes Figma sont
+embarquées dans `assets/icons/` sans modification des SVG d'origine. Les ombres
+des deux badges sont appliquées nativement selon les métadonnées Figma car leurs
+filtres SVG ne sont pas pris en charge. La police et sa licence OFL sont dans
+`assets/fonts/nunito/`.
+
+Routes privées ajoutées dans `lib/app/router.dart`:
+- `/seasonal-vegetables`
+- `/sorting-guide`
+- `/community`
+- `/map`
+- `/waste-scan`
+- `/settings`
+
+Le rendu grisé de la carte communauté est uniquement visuel: elle reste
+cliquable. Les destinations sont poussées dans la pile pour conserver l'accueil
+et son profil au retour. La redirection après connexion et la protection des
+routes continuent d'utiliser `AuthSession` et `createAppRouter`.
+
+L'accueil, la carte et le scan partagent un `ShellRoute`. Au clic comme au
+glissement, le rond vert rejoint l'icône en 200 ms, puis la destination s'ouvre.
+Les logos carte, accueil et scan restent fixes et sont dessinés au-dessus du
+rond; l'icône d'accueil n'intercepte pas le glissement du curseur.
+La barre reste visible sur cette destination pendant deux secondes avant de se
+masquer, sans déplacer son contenu. Elle n'est pas interactive pendant cette
+phase; le bouton retour reste disponible. Au retour à l'accueil, le temporisateur
+est annulé et le bouton retrouve le centre. Une autre navigation ou une fin de
+session annule une sélection en cours. Les animations désactivées dans les
+réglages d'accessibilité sont respectées; le délai de deux secondes est conservé.
+Les durées restent centralisées dans `HomeSizes`.
