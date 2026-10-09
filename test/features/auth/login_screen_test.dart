@@ -85,7 +85,8 @@ void main() {
     await submitCredentials(tester);
     await tester.pumpAndSettle();
 
-    expect(find.text('Connecté en tant que ada@example.com'), findsOneWidget);
+    expect(find.text('Ada'), findsOneWidget);
+    expect(find.text('Légumes de saison'), findsOneWidget);
     expect(find.text(credentialsError), findsNothing);
   });
 
@@ -116,10 +117,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final Completer<AuthTokens> pending = Completer<AuthTokens>();
-    await pumpLogin(
-      tester,
-      FakeAuthApiService(onLogin: (_) => pending.future),
-    );
+    await pumpLogin(tester, FakeAuthApiService(onLogin: (_) => pending.future));
 
     await submitCredentials(tester);
 

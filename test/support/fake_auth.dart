@@ -15,10 +15,13 @@ AuthTokens tokensGeneration(
   );
 }
 
-UserResponse connectedUser({String email = 'ada@example.com'}) {
+UserResponse connectedUser({
+  String email = 'ada@example.com',
+  String firstName = 'Ada',
+}) {
   return UserResponse(
     id: '00000000-0000-0000-0000-000000000001',
-    firstName: 'Ada',
+    firstName: firstName,
     lastName: 'Lovelace',
     email: email,
     username: 'ada',
@@ -80,10 +83,7 @@ class FakeAuthApiService extends AuthApiService {
   }
 
   @override
-  Future<AuthTokens> refresh(
-    String refreshToken, {
-    String? deviceInfo,
-  }) async {
+  Future<AuthTokens> refresh(String refreshToken, {String? deviceInfo}) async {
     refreshedTokens.add(refreshToken);
     return onRefresh == null
         ? tokensGeneration(refreshedTokens.length + 1)

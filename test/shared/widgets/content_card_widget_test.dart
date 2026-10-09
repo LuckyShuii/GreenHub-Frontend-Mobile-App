@@ -1,9 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_frontend/shared/widgets/content_card_widget.dart';
 
 void main() {
   group('ContentCardWidget', () {
+    testWidgets('can be activated with the keyboard', (
+      WidgetTester tester,
+    ) async {
+      int activations = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ContentCardWidget(
+              title: 'Carte accessible',
+              description: 'Description',
+              onTap: () => activations++,
+            ),
+          ),
+        ),
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(activations, 1);
+    });
+
+    testWidgets('supports a custom leading and navigation card styles', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 171,
+              child: ContentCardWidget(
+                title: 'Guide de tri',
+                description: 'Pour bien trier !',
+                leading: const SizedBox(key: Key('custom-leading'), height: 55),
+                minHeight: 150,
+                bottomAligned: true,
+                textAlign: TextAlign.right,
+                titleStyle: const TextStyle(fontSize: 15),
+                descriptionStyle: const TextStyle(fontSize: 10),
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byKey(const Key('custom-leading')), findsOneWidget);
+      expect(
+        tester.getSize(find.byType(ContentCardWidget)).height,
+        greaterThanOrEqualTo(150),
+      );
+      expect(
+        tester.widget<Text>(find.text('Guide de tri')).textAlign,
+        TextAlign.right,
+      );
+      expect(
+        tester.widget<Text>(find.text('Guide de tri')).style!.fontSize,
+        15,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('renders with title and description', (
       WidgetTester tester,
     ) async {
