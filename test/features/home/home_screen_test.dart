@@ -26,15 +26,19 @@ void main() {
       router.routerDelegate.currentConfiguration.last.matchedLocation;
 
   Finder navigationIcon(String asset) => find.byWidgetPredicate(
-    (Widget widget) => widget is SvgPicture &&
+    (Widget widget) =>
+        widget is SvgPicture &&
         widget.bytesLoader is SvgAssetLoader &&
-        (widget.bytesLoader as SvgAssetLoader).assetName == 'assets/icons/$asset',
+        (widget.bytesLoader as SvgAssetLoader).assetName ==
+            'assets/icons/$asset',
   );
 
   Map<String, Offset> navigationIconCenters(WidgetTester tester) =>
       <String, Offset>{
         for (final String asset in <String>[
-          'home_map.svg', 'home_house.svg', 'home_scan.svg',
+          'home_map.svg',
+          'home_house.svg',
+          'home_scan.svg',
         ])
           asset: tester.getCenter(navigationIcon(asset)),
       };
@@ -49,13 +53,19 @@ void main() {
           HomeNavigationDestination.home: 'home_house.svg',
           HomeNavigationDestination.scan: 'home_scan.svg',
         }.entries) {
-      final SvgPicture icon = tester.widget<SvgPicture>(navigationIcon(entry.value));
-      expect(icon.colorFilter, ColorFilter.mode(
-        entry.key == active
-            ? HomeColors.navigationIconActive
-            : HomeColors.navigationIconInactive,
-        BlendMode.srcIn,
-      ), reason: entry.value);
+      final SvgPicture icon = tester.widget<SvgPicture>(
+        navigationIcon(entry.value),
+      );
+      expect(
+        icon.colorFilter,
+        ColorFilter.mode(
+          entry.key == active
+              ? HomeColors.navigationIconActive
+              : HomeColors.navigationIconInactive,
+          BlendMode.srcIn,
+        ),
+        reason: entry.value,
+      );
     }
   }
 
@@ -84,6 +94,7 @@ void main() {
     AuthSession session, {
     String initialLocation = AppRoutes.home,
     TextScaler textScaler = TextScaler.noScaling,
+    bool disableAnimations = false,
   }) async {
     final GoRouter router = createAppRouter(
       session,
@@ -96,7 +107,10 @@ void main() {
         theme: AppTheme.light,
         routerConfig: router,
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+          data: MediaQuery.of(context).copyWith(
+            textScaler: textScaler,
+            disableAnimations: disableAnimations,
+          ),
           child: RepaintBoundary(key: const Key('home-render'), child: child!),
         ),
       ),
@@ -135,7 +149,9 @@ void main() {
       );
       final Finder thumb = find.byKey(const Key('home-navigation-thumb'));
       final Offset originalCenter = tester.getCenter(thumb);
-      final Map<String, Offset> originalIconCenters = navigationIconCenters(tester);
+      final Map<String, Offset> originalIconCenters = navigationIconCenters(
+        tester,
+      );
 
       await tester.drag(thumb, delta);
       await tester.pumpAndSettle();
@@ -171,11 +187,17 @@ void main() {
       final Finder thumb = find.byKey(const Key('home-navigation-thumb'));
       final Offset originalCenter = tester.getCenter(thumb);
       final double direction = label == 'Carte' ? -1 : 1;
-      final Map<String, Offset> originalIconCenters = navigationIconCenters(tester);
-      final Stack track = tester.widget<Stack>(find.descendant(
-        of: find.byType(HomeBottomNavigationWidget),
-        matching: find.byType(Stack),
-      ).first);
+      final Map<String, Offset> originalIconCenters = navigationIconCenters(
+        tester,
+      );
+      final Stack track = tester.widget<Stack>(
+        find
+            .descendant(
+              of: find.byType(HomeBottomNavigationWidget),
+              matching: find.byType(Stack),
+            )
+            .first,
+      );
       expect(track.children.first, isA<Positioned>());
       expect(track.children.last, isA<Row>());
       expectNavigationColors(tester, HomeNavigationDestination.home);
@@ -189,8 +211,12 @@ void main() {
       expect(offset * direction, greaterThan(0));
       expect(offset.abs(), lessThan(HomeSizes.navigationSlot));
       expect(navigationIconCenters(tester), originalIconCenters);
-        expectNavigationColors(tester, direction < 0
-          ? HomeNavigationDestination.map : HomeNavigationDestination.scan);
+      expectNavigationColors(
+        tester,
+        direction < 0
+            ? HomeNavigationDestination.map
+            : HomeNavigationDestination.scan,
+      );
       await tester.pump(HomeSizes.selectionDuration ~/ 2);
       await tester.pump(const Duration(milliseconds: 16));
       expect(calls, 1);
@@ -215,19 +241,27 @@ void main() {
     ) async {
       final Completer<void> destination = Completer<void>();
       Future<void> open() => destination.future;
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(body: Center(
-          child: HomeBottomNavigationWidget(onMap: open, onScan: open),
-        )),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: HomeBottomNavigationWidget(onMap: open, onScan: open),
+            ),
+          ),
+        ),
+      );
       await tester.tap(find.byTooltip(label));
       await tester.pump();
       expectNavigationColors(tester, HomeNavigationDestination.home);
       await tester.pump(const Duration(milliseconds: 35));
       expectNavigationColors(tester, null);
       await tester.pump(const Duration(milliseconds: 65));
-      expectNavigationColors(tester, label == 'Carte'
-          ? HomeNavigationDestination.map : HomeNavigationDestination.scan);
+      expectNavigationColors(
+        tester,
+        label == 'Carte'
+            ? HomeNavigationDestination.map
+            : HomeNavigationDestination.scan,
+      );
       await tester.pumpAndSettle();
       destination.complete();
       await tester.pumpAndSettle();
@@ -244,7 +278,7 @@ void main() {
     AppRoutes.settings,
   ]) {
     if (route == AppRoutes.map || route == AppRoutes.wasteScan) {
-      testWidgets('hides the navigation after two seconds on $route', (
+      testWidgets('slides the navigation down after two seconds on $route', (
         WidgetTester tester,
       ) async {
         final GoRouter router = await pumpHome(
@@ -258,7 +292,13 @@ void main() {
         final Offset messagePosition = tester.getCenter(
           find.text('Page en construction ⚙️'),
         );
+        final Offset originalCenter = tester.getCenter(thumb);
         await tester.pump(HomeSizes.destinationVisibilityDuration);
+        expect(thumb, findsOneWidget);
+        await tester.pump();
+        await tester.pump(HomeSizes.navigationExitDuration ~/ 2);
+        expect(tester.getCenter(thumb).dy, greaterThan(originalCenter.dy));
+        await tester.pumpAndSettle();
         expect(thumb, findsNothing);
         expect(
           tester.getCenter(find.text('Page en construction ⚙️')),
@@ -405,9 +445,11 @@ void main() {
       await tester.pump();
       await expectLater(
         find.byKey(const Key('home-render')),
-        matchesGoldenFile(Uri.file(
-          '${Directory.systemTemp.path}/greenhub-navigation-$name.png',
-        )),
+        matchesGoldenFile(
+          Uri.file(
+            '${Directory.systemTemp.path}/greenhub-navigation-$name.png',
+          ),
+        ),
       );
     } finally {
       debugDisableShadows = previousDisableShadows;
@@ -457,7 +499,21 @@ void main() {
 
         await tester.pump(const Duration(milliseconds: 1999));
         expect(thumb, findsOneWidget);
+        final Offset messagePosition = tester.getCenter(
+          find.text('Page en construction ⚙️'),
+        );
+        final Offset stationaryCenter = tester.getCenter(thumb);
         await tester.pump(const Duration(milliseconds: 1));
+        expect(thumb, findsOneWidget);
+        await tester.pump();
+        await tester.pump(HomeSizes.navigationExitDuration ~/ 2);
+        expect(tester.getCenter(thumb).dy, greaterThan(stationaryCenter.dy));
+        expect(
+          tester.getCenter(find.text('Page en construction ⚙️')),
+          messagePosition,
+        );
+        await captureNavigation(tester, 'exiting-$captureName');
+        await tester.pumpAndSettle();
         expect(thumb, findsNothing);
         await captureNavigation(tester, 'hidden-$captureName');
 
@@ -486,6 +542,167 @@ void main() {
       },
     );
   }
+
+  Future<void> startNavigationExit(WidgetTester tester) async {
+    await tester.pump(HomeSizes.destinationVisibilityDuration);
+    await tester.pump();
+    await tester.pump(HomeSizes.navigationExitDuration ~/ 2);
+  }
+
+  for (final String route in <String>[AppRoutes.map, AppRoutes.wasteScan]) {
+    testWidgets('restores the bar when returning during the exit from $route', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter router = await pumpHome(
+        tester,
+        await signedInSession(),
+        initialLocation: route,
+      );
+      final Finder control = find.byType(HomeBottomNavigationWidget);
+      final double originalTop = tester.getTopLeft(control).dy;
+      await startNavigationExit(tester);
+      expect(tester.getTopLeft(control).dy, greaterThan(originalTop));
+      await tester.tap(find.byTooltip('Retour à l\'accueil'));
+      await tester.pumpAndSettle();
+      expect(currentRoute(router), AppRoutes.home);
+      expect(tester.getTopLeft(control).dy, closeTo(originalTop, 0.01));
+      await tester.pump(const Duration(seconds: 3));
+      expect(control, findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets(
+      'hides $route immediately after its delay with reduced motion',
+      (WidgetTester tester) async {
+        await pumpHome(
+          tester,
+          await signedInSession(),
+          initialLocation: route,
+          disableAnimations: true,
+        );
+        final Finder thumb = find.byKey(const Key('home-navigation-thumb'));
+        expect(thumb, findsOneWidget);
+        await tester.pump(HomeSizes.destinationVisibilityDuration);
+        expect(thumb, findsNothing);
+        expect(
+          tester
+              .widget<AnimatedSlide>(
+                find.byKey(const Key('home-navigation-exit')),
+              )
+              .offset,
+          Offset.zero,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  for (final (Size viewport, double bottomInset) in <(Size, double)>[
+    (const Size(320, 568), 0),
+    (const Size(393, 852), 34),
+  ]) {
+    testWidgets(
+      'moves the entire bar offscreen with bottom inset $bottomInset',
+      (WidgetTester tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = viewport;
+        tester.view.padding = FakeViewPadding(top: 24, bottom: bottomInset);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetPadding);
+        await pumpHome(
+          tester,
+          await signedInSession(),
+          initialLocation: AppRoutes.map,
+        );
+        final Finder control = find.byType(HomeBottomNavigationWidget);
+        final Rect originalRect = tester.getRect(control);
+        final Map<String, Offset> originalIcons = navigationIconCenters(tester);
+        await startNavigationExit(tester);
+        final Rect movingRect = tester.getRect(control);
+        expect(movingRect.top, greaterThan(originalRect.top));
+        final double deltaY = movingRect.top - originalRect.top;
+        for (final MapEntry<String, Offset> entry in originalIcons.entries) {
+          final Offset iconCenter = tester.getCenter(navigationIcon(entry.key));
+          expect(iconCenter.dx, closeTo(entry.value.dx, 0.01));
+          expect(iconCenter.dy, closeTo(entry.value.dy + deltaY, 0.01));
+        }
+        await tester.pump(
+          HomeSizes.navigationExitDuration ~/ 2 -
+              const Duration(milliseconds: 1),
+        );
+        expect(
+          tester.getRect(control).top,
+          greaterThanOrEqualTo(viewport.height),
+        );
+        await tester.pumpAndSettle();
+        expect(control, findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets(
+    'restarts the display delay when the destination changes during exit',
+    (WidgetTester tester) async {
+      final GoRouter router = await pumpHome(
+        tester,
+        await signedInSession(),
+        initialLocation: AppRoutes.map,
+      );
+      await startNavigationExit(tester);
+      router.go(AppRoutes.wasteScan);
+      await tester.pumpAndSettle();
+      final Finder control = find.byType(HomeBottomNavigationWidget);
+      expect(currentRoute(router), AppRoutes.wasteScan);
+      expect(control, findsOneWidget);
+      expect(
+        tester
+            .widget<AnimatedSlide>(
+              find.byKey(const Key('home-navigation-exit')),
+            )
+            .offset,
+        Offset.zero,
+      );
+      await tester.pump(HomeSizes.navigationExitDuration);
+      expect(control, findsOneWidget);
+      await tester.pump(HomeSizes.destinationVisibilityDuration);
+      await tester.pumpAndSettle();
+      expect(control, findsNothing);
+    },
+  );
+
+  testWidgets('cancels the exit safely when the session ends', (
+    WidgetTester tester,
+  ) async {
+    final AuthSession session = await signedInSession();
+    final GoRouter router = await pumpHome(
+      tester,
+      session,
+      initialLocation: AppRoutes.map,
+    );
+    await startNavigationExit(tester);
+    await session.logout();
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 3));
+    expect(currentRoute(router), AppRoutes.landing);
+    expect(find.byType(HomeBottomNavigationWidget), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('does not finish the exit after its shell is disposed', (
+    WidgetTester tester,
+  ) async {
+    await pumpHome(
+      tester,
+      await signedInSession(),
+      initialLocation: AppRoutes.map,
+    );
+    await startNavigationExit(tester);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 3));
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('ignores the opposite icon while the selection is animating', (
     WidgetTester tester,
@@ -580,7 +797,9 @@ void main() {
         );
         final Finder thumb = find.byKey(const Key('home-navigation-thumb'));
         final Offset originalCenter = tester.getCenter(thumb);
-        final Map<String, Offset> originalIconCenters = navigationIconCenters(tester);
+        final Map<String, Offset> originalIconCenters = navigationIconCenters(
+          tester,
+        );
         final TestGesture gesture = await tester.startGesture(
           tester.getCenter(navigationIcon('home_house.svg')),
         );

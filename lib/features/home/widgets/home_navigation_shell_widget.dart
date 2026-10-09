@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../shared/theme/app_spacing.dart';
 import '../theme/home_sizes.dart';
 import 'home_bottom_navigation_widget.dart';
 
@@ -29,6 +30,7 @@ class HomeNavigationShellWidget extends StatefulWidget {
 class _HomeNavigationShellWidgetState extends State<HomeNavigationShellWidget> {
   Timer? _hideTimer;
   bool _visible = true;
+  bool _isExiting = false;
 
   @override
   void initState() {
@@ -48,16 +50,38 @@ class _HomeNavigationShellWidgetState extends State<HomeNavigationShellWidget> {
   void _updateVisibility() {
     _hideTimer?.cancel();
     _visible = true;
+    _isExiting = false;
     if (widget.isActive &&
         widget.destination != HomeNavigationDestination.home) {
       _hideTimer = Timer(HomeSizes.destinationVisibilityDuration, () {
         if (mounted) {
           setState(() {
-            _visible = false;
+            if (MediaQuery.disableAnimationsOf(context)) {
+              _visible = false;
+            } else {
+              _isExiting = true;
+            }
           });
         }
       });
     }
+  }
+
+  void _finishExit() {
+    if (!_isExiting || !_visible) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          _isExiting &&
+          _visible &&
+          widget.isActive &&
+          widget.destination != HomeNavigationDestination.home) {
+        setState(() {
+          _visible = false;
+        });
+      }
+    });
   }
 
   @override
@@ -76,22 +100,37 @@ class _HomeNavigationShellWidgetState extends State<HomeNavigationShellWidget> {
           bottom: 0,
           left: 0,
           right: 0,
-          child: SafeArea(
-            top: false,
+          child: AnimatedSlide(
+            key: const Key('home-navigation-exit'),
+            offset: _isExiting ? const Offset(0, 1) : Offset.zero,
+            duration: _isExiting && !MediaQuery.disableAnimationsOf(context)
+                ? HomeSizes.navigationExitDuration
+                : Duration.zero,
+            curve: Curves.easeInCubic,
+            onEnd: _finishExit,
             child: Padding(
-              padding: EdgeInsets.only(bottom: HomeSizes.navigationBottomGap),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Visibility(
-                  visible: _visible && widget.isActive,
-                  maintainState: true,
-                  child: HomeBottomNavigationWidget(
-                    destination: widget.destination,
-                    enabled:
-                        widget.isActive &&
-                        widget.destination == HomeNavigationDestination.home,
-                    onMap: widget.onMap,
-                    onScan: widget.onScan,
+              padding: EdgeInsets.only(top: AppSpacing.lg),
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: HomeSizes.navigationBottomGap,
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Visibility(
+                      visible: _visible && widget.isActive,
+                      maintainState: true,
+                      child: HomeBottomNavigationWidget(
+                        destination: widget.destination,
+                        enabled:
+                            widget.isActive &&
+                            widget.destination ==
+                                HomeNavigationDestination.home,
+                        onMap: widget.onMap,
+                        onScan: widget.onScan,
+                      ),
+                    ),
                   ),
                 ),
               ),

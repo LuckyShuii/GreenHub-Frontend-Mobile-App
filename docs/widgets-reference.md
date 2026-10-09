@@ -165,9 +165,13 @@ glissement, le rond vert rejoint l'icône en 200 ms, puis la destination s'ouvre
 Les logos carte, accueil et scan restent fixes et sont dessinés au-dessus du
 rond; l'icône d'accueil n'intercepte pas le glissement du curseur.
 La barre reste visible sur cette destination pendant deux secondes avant de se
-masquer, sans déplacer son contenu. Elle n'est pas interactive pendant cette
+déplacer vers le bas en 250 ms, jusqu'à sortir entièrement de l'écran, ombre et
+zone de sécurité comprises. Le contenu de la page reste immobile et il n'y a pas
+de fondu. Elle n'est pas interactive pendant cette
 phase; le bouton retour reste disponible. Au retour à l'accueil, le temporisateur
-est annulé et le bouton retrouve le centre. Une autre navigation ou une fin de
+et la sortie en cours sont annulés; la barre réapparaît à sa position habituelle
+et le bouton retrouve le centre. Une autre navigation ou une fin de
 session annule une sélection en cours. Les animations désactivées dans les
-réglages d'accessibilité sont respectées; le délai de deux secondes est conservé.
+réglages d'accessibilité masquent directement la barre après les deux secondes,
+sans translation.
 Les durées restent centralisées dans `HomeSizes`.

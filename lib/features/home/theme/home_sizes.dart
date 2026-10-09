@@ -56,6 +56,7 @@ class HomeSizes {
   static const double dragThreshold = 0.6;
   static const Duration selectionDuration = Duration(milliseconds: 200);
   static const Duration destinationVisibilityDuration = Duration(seconds: 2);
+  static const Duration navigationExitDuration = Duration(milliseconds: 250);
   static const Duration resetDuration = Duration(milliseconds: 150);
 
   const HomeSizes._();
