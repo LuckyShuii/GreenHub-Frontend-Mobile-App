@@ -14,37 +14,13 @@ class _MapFiltersState extends State<MapFilters> {
   bool showFilters = false;
   bool showFiltersTrash = false;
   bool showFiltersBike = false;
-  final Set<String> selectedFilters = {};
-
-  Widget filterButton({required IconData icon, required String label}) {
-    final selected = selectedFilters.contains(label);
-
-    return Column(
-      children: [
-        FloatingActionButton.small(
-          heroTag: label,
-          backgroundColor: selected ? Colors.blue : Colors.white,
-          foregroundColor: selected ? Colors.white : Colors.black,
-          onPressed: () {
-            setState(() {
-              if (selected) {
-                selectedFilters.remove(label);
-              } else {
-                selectedFilters.add(label);
-              }
-            });
-          },
-          child: Icon(icon),
-        ),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
-    );
-  }
+  bool showFiltersBus = false;
+  bool showFiltersCar = false;
 
   @override
   Widget build(BuildContext context) {
-    final bool hasSubfilters =
-        showFilters || showFiltersTrash || showFiltersBike;
+    final bool hasfilters = showFilters || showFiltersTrash || showFiltersBike || showFiltersBus || showFiltersCar;
+    final bool hasSubfilters = showFiltersTrash || showFiltersBike || showFiltersBus || showFiltersCar;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -53,7 +29,7 @@ class _MapFiltersState extends State<MapFilters> {
         Container(
           margin: const EdgeInsets.only(top: 8),
           padding: const EdgeInsets.all(10),
-          decoration: hasSubfilters ? BoxDecoration(
+          decoration: hasfilters ? BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
@@ -68,23 +44,18 @@ class _MapFiltersState extends State<MapFilters> {
             mainAxisSize: MainAxisSize.min,
             children: [
               FABSvgButtonWidget(
+                assetPath: showFilters ? 'assets/icons/filter-reset.svg' : 'assets/icons/filter.svg',
                 onPressed: () {
                   setState(() {
-                    if (showFiltersTrash) {
-                      showFiltersTrash = false;
+                    if (hasSubfilters) {
                       showFilters = true;
                     } else {
                       showFilters = !showFilters;
                     }
                   });
                 },
-                assetPath: showFilters ? 'assets/icons/filter-reset.svg' : 'assets/icons/filter.svg',
               ),
-              if (showFilters && !showFiltersTrash) ...[
-                FABSvgButtonWidget(
-                  assetPath: 'assets/icons/bicycle.svg',
-                  onPressed: () => widget.onFilterSelected('velo'),
-                ),
+              if (showFilters && !hasSubfilters) ...[
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/waste.svg',
                   onPressed: () {
@@ -93,8 +64,40 @@ class _MapFiltersState extends State<MapFilters> {
                     });
                   },
                 ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/bus-front.svg',
+                  onPressed: () {
+                    setState(() {
+                      showFiltersBus = !showFiltersBus;
+                    });
+                  },
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/bicycle.svg',
+                  onPressed: () {
+                    setState(() {
+                      showFiltersBike = !showFiltersBike;
+                    });
+                  },
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/traffic-jam.svg',
+                  onPressed: () {
+                    setState(() {
+                      showFiltersCar = !showFiltersCar;
+                    });
+                  },
+                ),
               ],
               if (showFiltersTrash) ...[
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/waste.svg',
+                  onPressed: () {
+                    setState(() {
+                      showFiltersTrash = !showFiltersTrash;
+                    });
+                  },
+                ),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/banana.svg',
                   onPressed: () => widget.onFilterSelected('organique'),
@@ -110,6 +113,72 @@ class _MapFiltersState extends State<MapFilters> {
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/waste-restore.svg',
                   onPressed: () => widget.onFilterSelected('autre'),
+                ),
+              ],
+              if (showFiltersBus) ...[
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/bus-front.svg',
+                  onPressed: () {
+                    setState(() {
+                      showFiltersBus = !showFiltersBus;
+                    });
+                  },
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/bus.svg',
+                  onPressed: () => {},
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/tram.svg',
+                  onPressed: () => {},
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/metro.svg',
+                  onPressed: () => {},
+                ),
+              ],
+              if (showFiltersBike) ...[
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/bicycle.svg',
+                  onPressed: () {
+                    setState(() {
+                      showFiltersBike = !showFiltersBike;
+                    });
+                  },
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/velib.svg',
+                  onPressed: () => widget.onFilterSelected('velo'),
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/lim.svg',
+                  onPressed: () => {},
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/dott.svg',
+                  onPressed: () => {},
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/voi.svg',
+                  onPressed: () => {},
+                ),
+              ],
+              if (showFiltersCar) ...[
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/traffic-jam.svg',
+                  onPressed: () {
+                    setState(() {
+                      showFiltersCar = !showFiltersCar;
+                    });
+                  },
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/auto-partage.svg',
+                  onPressed: () => widget.onFilterSelected('organique'),
+                ),
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/covoiturage.svg',
+                  onPressed: () => widget.onFilterSelected('carton'),
                 ),
               ],
             ],
