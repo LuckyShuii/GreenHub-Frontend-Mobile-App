@@ -4,6 +4,7 @@ import 'package:flutter_frontend/features/map/widgets/custom_map_marker.dart';
 import 'package:flutter_frontend/features/map/services/map_manager.dart';
 import 'package:flutter_frontend/features/map/services/ourecycler_manager.dart';
 import 'package:flutter_frontend/features/map/services/velib_manager.dart';
+import 'package:flutter_frontend/features/map/widgets/filter_map_button.dart';
 import 'package:flutter_frontend/shared/shared.dart';
 import 'package:flutter_frontend/shared/utils/responsive_utils.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -140,10 +141,9 @@ class _MapPageState extends State<MapPage> {
               children: [
                 FABButtonWidget(icon: Icons.search, onPressed: () {}),
                 const SizedBox(height: 12),
-                FABButtonWidget(
-                  icon: Icons.filter_alt_outlined,
-                  onPressed: () => _loader('verre'),
-                ),
+                MapFilters(
+                  onFilterSelected: _loader,
+                )
               ],
             ),
           ),
