@@ -37,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmationController =
       TextEditingController();
@@ -68,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _lastNameController.dispose();
     _emailController.dispose();
     _usernameController.dispose();
-    _locationController.dispose();
+    _postalCodeController.dispose();
     _passwordController.removeListener(_updatePasswordState);
     _passwordConfirmationController.removeListener(_updatePasswordState);
     _emailController.removeListener(_clearEmailApiError);
@@ -97,7 +97,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       lastName: _lastNameController.text,
       email: _emailController.text,
       username: _usernameController.text,
-      location: _locationController.text,
+      postalCode: _postalCodeController.text,
       password: _passwordController.text,
     );
 
@@ -326,9 +326,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         SizedBox(height: AppSpacing.fieldGap),
         AuthTextFieldWidget(
-          label: 'Localisation',
-          hint: 'Localisation',
-          controller: _locationController,
+          label: 'Code postal',
+          hint: 'Code postal',
+          controller: _postalCodeController,
+          keyboardType: TextInputType.number,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(5),
+          ],
+          validator: validatePostalCode,
         ),
         SizedBox(height: AppSpacing.fieldGap),
         PasswordCompositionWidget(

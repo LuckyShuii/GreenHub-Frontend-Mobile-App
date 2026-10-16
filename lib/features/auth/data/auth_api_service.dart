@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'models/auth_tokens.dart';
+import 'models/change_password_request.dart';
 import 'models/login_request.dart';
+import 'models/profile_update_request.dart';
 import 'models/register_request.dart';
 import 'models/user_response.dart';
 
@@ -31,15 +33,15 @@ class AuthApiService {
   final http.Client _client;
 
   Future<UserResponse> register(RegisterRequest request) {
-    return _call(
-      () => _postJson('/api/auth/register', request.toJson()),
-      (int statusCode, dynamic body) {
-        if (statusCode == 201) {
-          return UserResponse.fromJson(body as Map<String, dynamic>);
-        }
-        throw _failure(statusCode, body);
-      },
-    );
+    return _call(() => _postJson('/api/auth/register', request.toJson()), (
+      int statusCode,
+      dynamic body,
+    ) {
+      if (statusCode == 201) {
+        return UserResponse.fromJson(body as Map<String, dynamic>);
+      }
+      throw _failure(statusCode, body);
+    });
   }
 
   Future<AuthTokens> login(LoginRequest request) {
@@ -56,10 +58,7 @@ class AuthApiService {
     if (deviceInfo != null) {
       payload['device_info'] = deviceInfo;
     }
-    return _call(
-      () => _postJson('/api/auth/refresh', payload),
-      _parseTokens,
-    );
+    return _call(() => _postJson('/api/auth/refresh', payload), _parseTokens);
   }
 
   Future<void> logout(String refreshToken) {
@@ -89,6 +88,57 @@ class AuthApiService {
           return UserResponse.fromJson(body as Map<String, dynamic>);
         }
         throw _failure(statusCode, body);
+      },
+    );
+  }
+
+  Future<UserResponse> updateCurrentUser(
+    String accessToken,
+    ProfileUpdateRequest request,
+  ) {
+    return _call(
+      () => _client.patch(
+        _uri('/api/auth/me'),
+        headers: _authorizedHeaders(accessToken),
+        body: jsonEncode(request.toJson()),
+      ),
+      (int statusCode, dynamic body) {
+        if (statusCode == 200) {
+          return UserResponse.fromJson(body as Map<String, dynamic>);
+        }
+        throw _failure(statusCode, body);
+      },
+    );
+  }
+
+  Future<void> changePassword(
+    String accessToken,
+    ChangePasswordRequest request,
+  ) {
+    return _call<void>(
+      () => _client.post(
+        _uri('/api/auth/me/password'),
+        headers: _authorizedHeaders(accessToken),
+        body: jsonEncode(request.toJson()),
+      ),
+      (int statusCode, dynamic body) {
+        if (statusCode != 204) {
+          throw _failure(statusCode, body);
+        }
+      },
+    );
+  }
+
+  Future<void> deleteCurrentUser(String accessToken) {
+    return _call<void>(
+      () => _client.delete(
+        _uri('/api/auth/me'),
+        headers: _authorizedHeaders(accessToken),
+      ),
+      (int statusCode, dynamic body) {
+        if (statusCode != 204) {
+          throw _failure(statusCode, body);
+        }
       },
     );
   }
@@ -129,6 +179,13 @@ class AuthApiService {
       body: jsonEncode(body),
     );
   }
+
+  Map<String, String> _authorizedHeaders(String accessToken) =>
+      <String, String>{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      };
 
   Uri _uri(String path) => Uri.parse('$_baseUrl$path');
 
