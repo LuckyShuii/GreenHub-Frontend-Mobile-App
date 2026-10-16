@@ -275,7 +275,6 @@ void main() {
     AppRoutes.community,
     AppRoutes.map,
     AppRoutes.wasteScan,
-    AppRoutes.settings,
   ]) {
     if (route == AppRoutes.map || route == AppRoutes.wasteScan) {
       testWidgets('slides the navigation down after two seconds on $route', (
@@ -386,9 +385,9 @@ void main() {
     await tester.tap(find.byTooltip('Réglages'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Page en construction ⚙️'), findsOneWidget);
+    expect(find.text('Paramètre'), findsOneWidget);
     expect(currentRoute(router), AppRoutes.settings);
-    await tester.tap(find.byTooltip('Retour à l\'accueil'));
+    await tester.tap(find.byTooltip('Retour'));
     await tester.pumpAndSettle();
     expect(find.text('Ada'), findsOneWidget);
     expect(api.accessTokensUsed, <String>['access-1']);
