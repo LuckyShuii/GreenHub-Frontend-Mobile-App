@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color transparent = Color(0x00000000);
+  static const Color white = Color(0xFFFFFFFF);
 
   // Vert Greener - Primaire
   static const Color v900 = Color(0xFF1C443B);

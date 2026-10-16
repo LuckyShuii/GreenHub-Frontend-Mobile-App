@@ -12,6 +12,8 @@ class PasswordCompositionWidget extends StatelessWidget {
   const PasswordCompositionWidget({
     required this.controller,
     required this.password,
+    this.label = 'Mot de passe',
+    this.fieldKey = const Key('register-password-field'),
     this.hasError = false,
     this.validator,
     super.key,
@@ -19,6 +21,8 @@ class PasswordCompositionWidget extends StatelessWidget {
 
   final TextEditingController controller;
   final String password;
+  final String label;
+  final Key fieldKey;
   final bool hasError;
   final String? Function(String? value)? validator;
 
@@ -38,7 +42,7 @@ class PasswordCompositionWidget extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-          child: Text('Mot de passe', style: AppTextStyles.formLabel),
+          child: Text(label, style: AppTextStyles.formLabel),
         ),
         SizedBox(height: AppSpacing.fieldLabelGap),
         DecoratedBox(
@@ -63,7 +67,7 @@ class PasswordCompositionWidget extends StatelessWidget {
                 SizedBox(
                   height: AppSizes.inputFieldHeight,
                   child: TextFormField(
-                    key: const Key('register-password-field'),
+                    key: fieldKey,
                     controller: controller,
                     obscureText: true,
                     validator: validator,
