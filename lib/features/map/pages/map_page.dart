@@ -7,6 +7,7 @@ import 'package:flutter_frontend/features/map/services/velib_manager.dart';
 import 'package:flutter_frontend/features/map/widgets/filter_map_button.dart';
 import 'package:flutter_frontend/shared/shared.dart';
 import 'package:flutter_frontend/shared/utils/responsive_utils.dart';
+import 'package:flutter_frontend/shared/widgets/fab_svg_button_widget.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -130,7 +131,7 @@ class _MapPageState extends State<MapPage> {
           Positioned(
             top: ResponsiveUtils.topSpacing(context),
             left: ResponsiveUtils.horizontalSpacing(context),
-            child: FABButtonWidget(icon: Icons.chevron_left, onPressed: () {}),
+            child: FABSvgButtonWidget(assetPath: 'assets/icons/circle-chevron-left.svg', onPressed: () {}),
           ),
 
           Positioned(
@@ -139,7 +140,7 @@ class _MapPageState extends State<MapPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                FABButtonWidget(icon: Icons.search, onPressed: () {}),
+                FABSvgButtonWidget(assetPath: 'assets/icons/search-02.svg', onPressed: () {}),
                 const SizedBox(height: 12),
                 MapFilters(
                   onFilterSelected: _loader,
@@ -151,8 +152,8 @@ class _MapPageState extends State<MapPage> {
           Positioned(
             bottom: ResponsiveUtils.bottomSpacing(context),
             right: ResponsiveUtils.horizontalSpacing(context),
-            child: FABButtonWidget(
-              icon: Icons.my_location,
+            child: FABSvgButtonWidget(
+              assetPath: 'assets/icons/gps-02.svg',
               onPressed: () async {
                 final position = await _mapManager.getCurrentPosition();
                 if (position == null || !mounted) return;

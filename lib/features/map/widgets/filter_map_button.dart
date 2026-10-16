@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/shared/shared.dart';
+import 'package:flutter_frontend/shared/widgets/fab_svg_button_widget.dart';
 
 class MapFilters extends StatefulWidget {
   final Future<void> Function(String type) onFilterSelected;
@@ -67,7 +67,7 @@ class _MapFiltersState extends State<MapFilters> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              FABButtonWidget(
+              FABSvgButtonWidget(
                 onPressed: () {
                   setState(() {
                     if (showFiltersTrash) {
@@ -78,15 +78,15 @@ class _MapFiltersState extends State<MapFilters> {
                     }
                   });
                 },
-                icon: showFilters ? Icons.close : Icons.filter_alt_outlined,
+                assetPath: showFilters ? 'assets/icons/filter-reset.svg' : 'assets/icons/filter.svg',
               ),
               if (showFilters && !showFiltersTrash) ...[
-                FABButtonWidget(
-                  icon: Icons.pedal_bike,
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/bicycle.svg',
                   onPressed: () => widget.onFilterSelected('velo'),
                 ),
-                FABButtonWidget(
-                  icon: Icons.delete,
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/waste.svg',
                   onPressed: () {
                     setState(() {
                       showFiltersTrash = !showFiltersTrash;
@@ -95,20 +95,20 @@ class _MapFiltersState extends State<MapFilters> {
                 ),
               ],
               if (showFiltersTrash) ...[
-                FABButtonWidget(
-                  icon: Icons.apple,
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/banana.svg',
                   onPressed: () => widget.onFilterSelected('organique'),
                 ),
-                FABButtonWidget(
-                  icon: Icons.inbox,
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/package.svg',
                   onPressed: () => widget.onFilterSelected('carton'),
                 ),
-                FABButtonWidget(
-                  icon: Icons.wine_bar,
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/milk-bottle.svg',
                   onPressed: () => widget.onFilterSelected('verre'),
                 ),
-                FABButtonWidget(
-                  icon: Icons.delete_outline,
+                FABSvgButtonWidget(
+                  assetPath: 'assets/icons/waste-restore.svg',
                   onPressed: () => widget.onFilterSelected('autre'),
                 ),
               ],
