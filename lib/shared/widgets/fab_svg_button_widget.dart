@@ -12,8 +12,8 @@ class FABSvgButtonWidget extends StatelessWidget {
     required this.onPressed,
     this.backgroundColor = AppColors.v700,
     this.foregroundColor = Colors.white,
-    this.size = 56,
-    this.iconSize = 24,
+    this.size = 60,
+    this.iconSize = 32,
   });
 
   final String assetPath;
@@ -29,17 +29,29 @@ class FABSvgButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const borderColor = Color(0xFFE2E4DF);
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
         color: backgroundColor,
-        boxShadow: AppShadows.lg,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: borderColor,
+          width: 1,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: borderColor,
+            offset: Offset(2, 3),
+            blurRadius: 0,
+            spreadRadius: 0,
+          )
+        ],
       ),
       child: Material(
         color: Colors.transparent,
-        shape: const CircleBorder(),
+        borderRadius: BorderRadius.circular(18),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onPressed,
