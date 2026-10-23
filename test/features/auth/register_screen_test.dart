@@ -355,7 +355,7 @@ class _SuccessfulAuthApiService extends AuthApiService {
       lastName: request.lastName,
       email: request.email,
       username: request.username,
-      location: request.location,
+      postalCode: request.postalCode,
       createdAt: DateTime(2026, 9, 15),
     );
   }

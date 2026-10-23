@@ -1,6 +1,8 @@
 import 'package:flutter_frontend/features/auth/data/auth_api_service.dart';
 import 'package:flutter_frontend/features/auth/data/models/auth_tokens.dart';
+import 'package:flutter_frontend/features/auth/data/models/change_password_request.dart';
 import 'package:flutter_frontend/features/auth/data/models/login_request.dart';
+import 'package:flutter_frontend/features/auth/data/models/profile_update_request.dart';
 import 'package:flutter_frontend/features/auth/data/models/user_response.dart';
 import 'package:flutter_frontend/features/auth/data/token_storage.dart';
 
@@ -25,7 +27,7 @@ UserResponse connectedUser({
     lastName: 'Lovelace',
     email: email,
     username: 'ada',
-    location: null,
+    postalCode: null,
     createdAt: DateTime(2026, 1, 1),
   );
 }
@@ -64,17 +66,31 @@ class FakeAuthApiService extends AuthApiService {
     this.onRefresh,
     this.onLogout,
     this.onFetchCurrentUser,
+    this.onUpdateCurrentUser,
+    this.onChangePassword,
+    this.onDeleteCurrentUser,
   }) : super(baseUrl: 'http://localhost:8000');
 
   Future<AuthTokens> Function(LoginRequest request)? onLogin;
   Future<AuthTokens> Function(String refreshToken)? onRefresh;
   Future<void> Function(String refreshToken)? onLogout;
   Future<UserResponse> Function(String accessToken)? onFetchCurrentUser;
+  Future<UserResponse> Function(
+    String accessToken,
+    ProfileUpdateRequest request,
+  )?
+  onUpdateCurrentUser;
+  Future<void> Function(String accessToken, ChangePasswordRequest request)?
+  onChangePassword;
+  Future<void> Function(String accessToken)? onDeleteCurrentUser;
 
   final List<LoginRequest> loginRequests = <LoginRequest>[];
   final List<String> refreshedTokens = <String>[];
   final List<String> loggedOutTokens = <String>[];
   final List<String> accessTokensUsed = <String>[];
+  final List<ProfileUpdateRequest> profileUpdates = <ProfileUpdateRequest>[];
+  final List<ChangePasswordRequest> passwordChanges = <ChangePasswordRequest>[];
+  final List<String> deletedAccounts = <String>[];
 
   @override
   Future<AuthTokens> login(LoginRequest request) async {
@@ -104,5 +120,34 @@ class FakeAuthApiService extends AuthApiService {
     return onFetchCurrentUser == null
         ? connectedUser()
         : onFetchCurrentUser!(accessToken);
+  }
+
+  @override
+  Future<UserResponse> updateCurrentUser(
+    String accessToken,
+    ProfileUpdateRequest request,
+  ) async {
+    accessTokensUsed.add(accessToken);
+    profileUpdates.add(request);
+    return onUpdateCurrentUser == null
+        ? connectedUser()
+        : onUpdateCurrentUser!(accessToken, request);
+  }
+
+  @override
+  Future<void> changePassword(
+    String accessToken,
+    ChangePasswordRequest request,
+  ) async {
+    accessTokensUsed.add(accessToken);
+    passwordChanges.add(request);
+    await onChangePassword?.call(accessToken, request);
+  }
+
+  @override
+  Future<void> deleteCurrentUser(String accessToken) async {
+    accessTokensUsed.add(accessToken);
+    deletedAccounts.add(accessToken);
+    await onDeleteCurrentUser?.call(accessToken);
   }
 }
