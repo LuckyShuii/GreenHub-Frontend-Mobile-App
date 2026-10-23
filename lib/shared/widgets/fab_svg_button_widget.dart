@@ -10,8 +10,8 @@ class FABSvgButtonWidget extends StatelessWidget {
     super.key,
     required this.assetPath,
     required this.onPressed,
-    this.backgroundColor = AppColors.v700,
-    this.foregroundColor = Colors.white,
+    this.backgroundColor = AppColors.o40,
+    this.foregroundColor = AppColors.o900,
     this.size = 60,
     this.iconSize = 32,
   });

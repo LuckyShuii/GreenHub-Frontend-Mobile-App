@@ -30,6 +30,7 @@ class _MapFiltersState extends State<MapFilters> {
       children: [
         FABSvgButtonWidget(
           assetPath: showFilters ? 'assets/icons/filter-reset.svg' : 'assets/icons/filter.svg',
+          backgroundColor: showFilters ? Color(0xFFE0BF70) : AppColors.o40,
           onPressed: () {
             setState(() {
               if (hasSubfilters) {
@@ -70,6 +71,7 @@ class _MapFiltersState extends State<MapFilters> {
                     });
                   },
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/bus-front.svg',
                   onPressed: () {
@@ -78,6 +80,7 @@ class _MapFiltersState extends State<MapFilters> {
                     });
                   },
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/bicycle.svg',
                   onPressed: () {
@@ -86,6 +89,7 @@ class _MapFiltersState extends State<MapFilters> {
                     });
                   },
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/traffic-jam.svg',
                   onPressed: () {
@@ -98,24 +102,29 @@ class _MapFiltersState extends State<MapFilters> {
               if (showFiltersTrash) ...[
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/waste.svg',
+                  backgroundColor: Color(0x7A4E8A64),
                   onPressed: () {
                     setState(() {
                       showFiltersTrash = !showFiltersTrash;
                     });
                   },
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/banana.svg',
                   onPressed: () => widget.onFilterSelected('organique'),
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/package.svg',
                   onPressed: () => widget.onFilterSelected('carton'),
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/milk-bottle.svg',
                   onPressed: () => widget.onFilterSelected('verre'),
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/waste-restore.svg',
                   onPressed: () => widget.onFilterSelected('autre'),
@@ -124,20 +133,24 @@ class _MapFiltersState extends State<MapFilters> {
               if (showFiltersBus) ...[
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/bus-front.svg',
+                  backgroundColor: Color(0x7A4E8A64),
                   onPressed: () {
                     setState(() {
                       showFiltersBus = !showFiltersBus;
                     });
                   },
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/bus.svg',
                   onPressed: () => {},
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/tram.svg',
                   onPressed: () => {},
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/metro.svg',
                   onPressed: () => {},
@@ -146,24 +159,29 @@ class _MapFiltersState extends State<MapFilters> {
               if (showFiltersBike) ...[
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/bicycle.svg',
+                  backgroundColor: Color(0x7A4E8A64),
                   onPressed: () {
                     setState(() {
                       showFiltersBike = !showFiltersBike;
                     });
                   },
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/velib.svg',
                   onPressed: () => widget.onFilterSelected('velo'),
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/lim.svg',
                   onPressed: () => {},
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/dott.svg',
                   onPressed: () => {},
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/voi.svg',
                   onPressed: () => {},
@@ -172,16 +190,19 @@ class _MapFiltersState extends State<MapFilters> {
               if (showFiltersCar) ...[
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/traffic-jam.svg',
+                  backgroundColor: Color(0x7A4E8A64),
                   onPressed: () {
                     setState(() {
                       showFiltersCar = !showFiltersCar;
                     });
                   },
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/auto-partage.svg',
                   onPressed: () => widget.onFilterSelected('organique'),
                 ),
+                const SizedBox(height: 12),
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/covoiturage.svg',
                   onPressed: () => widget.onFilterSelected('carton'),
