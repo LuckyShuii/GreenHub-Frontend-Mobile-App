@@ -25,6 +25,15 @@
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
+	<key>NSCameraUsageDescription</key>
+	<string>GreenHub a besoin de la caméra pour scanner le code-barres d'un produit.</string>
+		<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>GreenHub se connecte au serveur de développement sur votre réseau local.</string>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

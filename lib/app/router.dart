@@ -11,6 +11,10 @@ import '../features/home/widgets/home_bottom_navigation_widget.dart';
 import '../features/home/widgets/home_navigation_shell_widget.dart';
 import '../shared/screens/page_under_construction_screen.dart';
 
+import '../features/nutrition/data/models/product_response.dart';
+import '../features/nutrition/screens/product_result_screen.dart';
+import '../features/nutrition/screens/product_scan_screen.dart';
+
 class AppRoutes {
   static const String landing = '/';
   static const String login = '/login';
@@ -23,6 +27,8 @@ class AppRoutes {
   static const String map = '/map';
   static const String wasteScan = '/waste-scan';
   static const String settings = '/settings';
+  static const String productScan = '/product-scan';
+  static const String productResult = '/product-result';
 }
 
 const Set<String> _publicRoutes = <String>{
@@ -104,6 +110,15 @@ GoRouter createAppRouter(
           ])
             _constructionRoute(path),
         ],
+      ),
+      GoRoute(
+        path: AppRoutes.productScan,
+        builder: (context, state) => const ProductScanScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.productResult,
+        builder: (context, state) =>
+            ProductResultScreen(product: state.extra! as ProductResponse),
       ),
       for (final String path in <String>[
         AppRoutes.seasonalVegetables,

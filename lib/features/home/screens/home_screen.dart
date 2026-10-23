@@ -109,6 +109,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
+
+                              SizedBox(height: HomeSizes.cardGap),
+                              _shortcutCard(
+                                title: 'Scanner un produit',
+                                description:
+                                    'Score nutritionnel et environnemental',
+                                asset: 'assets/icons/nutrition_scan.svg',
+                                iconWidth: 24,
+                                iconHeight: 24,
+                                route: AppRoutes.productScan,
+                              ),
                               SizedBox(height: HomeSizes.cardGap),
                               _shortcutCard(
                                 title: 'Les posts de la communauté',
