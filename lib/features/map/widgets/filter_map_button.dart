@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/shared/shared.dart';
 import 'package:flutter_frontend/shared/widgets/fab_svg_button_widget.dart';
 
 class MapFilters extends StatefulWidget {
@@ -21,6 +22,7 @@ class _MapFiltersState extends State<MapFilters> {
   Widget build(BuildContext context) {
     final bool hasfilters = showFilters || showFiltersTrash || showFiltersBike || showFiltersBus || showFiltersCar;
     final bool hasSubfilters = showFiltersTrash || showFiltersBike || showFiltersBus || showFiltersCar;
+    const borderColor = Color(0xFFE2E4DF);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -30,14 +32,15 @@ class _MapFiltersState extends State<MapFilters> {
           margin: const EdgeInsets.only(top: 8),
           padding: const EdgeInsets.all(10),
           decoration: hasfilters ? BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(50),
-            boxShadow: [
+            color: AppColors.o40,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: const [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
+                color: borderColor,
+                offset: Offset(2, 3),
+                blurRadius: 0,
+                spreadRadius: 0,
+              )
             ],
           ) : null,
           child: Column(
