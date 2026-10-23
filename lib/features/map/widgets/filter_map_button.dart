@@ -28,6 +28,19 @@ class _MapFiltersState extends State<MapFilters> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        FABSvgButtonWidget(
+          assetPath: showFilters ? 'assets/icons/filter-reset.svg' : 'assets/icons/filter.svg',
+          onPressed: () {
+            setState(() {
+              if (hasSubfilters) {
+                showFilters = true;
+              } else {
+                showFilters = !showFilters;
+              }
+            });
+          },
+        ),
+
         Container(
           margin: const EdgeInsets.only(top: 8),
           padding: const EdgeInsets.all(10),
@@ -46,18 +59,6 @@ class _MapFiltersState extends State<MapFilters> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              FABSvgButtonWidget(
-                assetPath: showFilters ? 'assets/icons/filter-reset.svg' : 'assets/icons/filter.svg',
-                onPressed: () {
-                  setState(() {
-                    if (hasSubfilters) {
-                      showFilters = true;
-                    } else {
-                      showFilters = !showFilters;
-                    }
-                  });
-                },
-              ),
               if (showFilters && !hasSubfilters) ...[
                 FABSvgButtonWidget(
                   assetPath: 'assets/icons/waste.svg',
