@@ -26,7 +26,7 @@ class _MapFiltersState extends State<MapFilters> {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         FABSvgButtonWidget(
           assetPath: showFilters ? 'assets/icons/filter-reset.svg' : 'assets/icons/filter.svg',
@@ -42,8 +42,10 @@ class _MapFiltersState extends State<MapFilters> {
         ),
 
         Container(
+          width: 80,
           margin: const EdgeInsets.only(top: 8),
           padding: const EdgeInsets.all(10),
+          alignment: Alignment.center,
           decoration: hasfilters ? BoxDecoration(
             color: AppColors.o40,
             borderRadius: BorderRadius.circular(18),

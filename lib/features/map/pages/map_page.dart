@@ -139,6 +139,7 @@ class _MapPageState extends State<MapPage> {
             right: ResponsiveUtils.horizontalSpacing(context),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 FABSvgButtonWidget(assetPath: 'assets/icons/search-02.svg', onPressed: () {}),
                 const SizedBox(height: 12),
