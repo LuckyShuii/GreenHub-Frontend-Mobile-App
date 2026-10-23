@@ -118,10 +118,10 @@ class _MapPageState extends State<MapPage> {
                 markers: _stations.map((station) {
                   return Marker(
                     point: station.position,
-                    width: 40,
-                    height: 40,
+                    width: 30,
+                    height: 30,
                     child: CustomMapMarker(
-                      type: station.markerType
+                       color: Color(0xFF9bb9a4)
                     ),
                   );
                 }).toList(),
