@@ -1,0 +1,6 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="nutrition_scan">
+<path id="corners" d="M3 9V5C3 3.89543 3.89543 3 5 3H9M21 3H25C26.1046 3 27 3.89543 27 5V9M27 21V25C27 26.1046 26.1046 27 25 27H21M9 27H5C3.89543 27 3 26.1046 3 25V21" stroke="#22291F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="bars" d="M10 11V19M14 11V19M17 11V19M21 11V19" stroke="#22291F" stroke-width="2" stroke-linecap="round"/>
+</g>
+</svg>
