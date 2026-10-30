@@ -5,7 +5,9 @@ import 'package:flutter/foundation.dart';
 
 import 'auth_api_service.dart';
 import 'models/auth_tokens.dart';
+import 'models/change_password_request.dart';
 import 'models/login_request.dart';
+import 'models/profile_update_request.dart';
 import 'models/user_response.dart';
 import 'token_storage.dart';
 
@@ -65,11 +67,7 @@ class AuthSession extends ChangeNotifier {
   Future<void> login({required String email, required String password}) async {
     final String deviceId = await _getDeviceId();
     final AuthTokens tokens = await _api.login(
-      LoginRequest(
-        email: email,
-        password: password,
-        deviceInfo: deviceId,
-      ),
+      LoginRequest(email: email, password: password, deviceInfo: deviceId),
     );
     await _storeTokens(tokens);
     _setStatus(AuthStatus.authenticated);
@@ -118,6 +116,23 @@ class AuthSession extends ChangeNotifier {
 
   Future<UserResponse> fetchCurrentUser() {
     return authorizedCall(_api.fetchCurrentUser);
+  }
+
+  Future<UserResponse> updateCurrentUser(ProfileUpdateRequest request) {
+    return authorizedCall(
+      (String accessToken) => _api.updateCurrentUser(accessToken, request),
+    );
+  }
+
+  Future<void> changePassword(ChangePasswordRequest request) {
+    return authorizedCall(
+      (String accessToken) => _api.changePassword(accessToken, request),
+    );
+  }
+
+  Future<void> deleteCurrentUser() async {
+    await authorizedCall(_api.deleteCurrentUser);
+    await _clearSession();
   }
 
   Future<void> logout() async {

@@ -4,7 +4,7 @@ class RegisterRequest {
     required this.lastName,
     required this.email,
     required this.username,
-    required this.location,
+    required this.postalCode,
     required this.password,
   });
 
@@ -12,7 +12,7 @@ class RegisterRequest {
   final String lastName;
   final String email;
   final String username;
-  final String? location;
+  final String? postalCode;
   final String password;
 
   Map<String, dynamic> toJson() {
@@ -21,9 +21,9 @@ class RegisterRequest {
       'nom': lastName.trim(),
       'email': email.trim().toLowerCase(),
       'pseudonyme': username.trim(),
-      'localisation': location?.trim().isEmpty ?? true
+      'code_postal': postalCode?.trim().isEmpty ?? true
           ? null
-          : location!.trim(),
+          : postalCode!.trim(),
       'mot_de_passe': password,
     };
   }

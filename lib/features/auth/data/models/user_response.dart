@@ -5,7 +5,7 @@ class UserResponse {
     required this.lastName,
     required this.email,
     required this.username,
-    required this.location,
+    required this.postalCode,
     required this.createdAt,
   });
 
@@ -16,7 +16,7 @@ class UserResponse {
       lastName: json['nom'] as String,
       email: json['email'] as String,
       username: json['pseudonyme'] as String,
-      location: json['localisation'] as String?,
+      postalCode: json['code_postal'] as String?,
       createdAt: DateTime.parse(json['date_creation'] as String),
     );
   }
@@ -26,6 +26,6 @@ class UserResponse {
   final String lastName;
   final String email;
   final String username;
-  final String? location;
+  final String? postalCode;
   final DateTime createdAt;
 }

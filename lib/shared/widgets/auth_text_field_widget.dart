@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
@@ -18,6 +19,7 @@ class AuthTextFieldWidget extends StatelessWidget {
     this.autovalidate = true,
     this.focusNode,
     this.keyboardType,
+    this.inputFormatters,
     this.validator,
     super.key,
   });
@@ -31,6 +33,7 @@ class AuthTextFieldWidget extends StatelessWidget {
   final bool autovalidate;
   final FocusNode? focusNode;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   final String? Function(String? value)? validator;
 
   @override
@@ -63,6 +66,7 @@ class AuthTextFieldWidget extends StatelessWidget {
             controller: controller,
             focusNode: focusNode,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             obscureText: obscureText,
             validator: validator,
             style: AppTextStyles.formInput,

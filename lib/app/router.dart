@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/data/auth_session.dart';
+import '../features/auth/data/models/user_response.dart';
 import '../features/auth/screens/landing_screen.dart';
 import '../features/auth/screens/forgot_password_screen.dart';
 import '../features/auth/screens/login_screen.dart';
@@ -9,6 +10,11 @@ import '../features/auth/screens/register_screen.dart';
 import '../features/home/screens/home_screen.dart';
 import '../features/home/widgets/home_bottom_navigation_widget.dart';
 import '../features/home/widgets/home_navigation_shell_widget.dart';
+import '../features/settings/screens/delete_account_screen.dart';
+import '../features/settings/screens/password_edit_screen.dart';
+import '../features/settings/screens/profile_edit_screen.dart';
+import '../features/settings/screens/profile_screen.dart';
+import '../features/settings/screens/settings_screen.dart';
 import '../shared/screens/page_under_construction_screen.dart';
 
 class AppRoutes {
@@ -23,6 +29,10 @@ class AppRoutes {
   static const String map = '/map';
   static const String wasteScan = '/waste-scan';
   static const String settings = '/settings';
+  static const String profile = '/settings/profile';
+  static const String profileEdit = '/settings/profile/edit';
+  static const String passwordEdit = '/settings/profile/password';
+  static const String deleteAccount = '/settings/delete-account';
 }
 
 const Set<String> _publicRoutes = <String>{
@@ -109,9 +119,35 @@ GoRouter createAppRouter(
         AppRoutes.seasonalVegetables,
         AppRoutes.sortingGuide,
         AppRoutes.community,
-        AppRoutes.settings,
       ])
         _constructionRoute(path),
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (context, state) => SettingsScreen(authSession: authSession),
+      ),
+      GoRoute(
+        path: AppRoutes.profile,
+        builder: (context, state) => ProfileScreen(authSession: authSession),
+      ),
+      GoRoute(
+        path: AppRoutes.profileEdit,
+        builder: (context, state) {
+          final UserResponse? user = state.extra as UserResponse?;
+          return user == null
+              ? ProfileScreen(authSession: authSession)
+              : ProfileEditScreen(authSession: authSession, user: user);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.passwordEdit,
+        builder: (context, state) =>
+            PasswordEditScreen(authSession: authSession),
+      ),
+      GoRoute(
+        path: AppRoutes.deleteAccount,
+        builder: (context, state) =>
+            DeleteAccountScreen(authSession: authSession),
+      ),
     ],
   );
   return router;

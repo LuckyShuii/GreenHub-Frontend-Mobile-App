@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_frontend/features/auth/data/auth_api_service.dart';
 import 'package:flutter_frontend/features/auth/data/models/auth_tokens.dart';
 import 'package:flutter_frontend/features/auth/data/models/login_request.dart';
+import 'package:flutter_frontend/features/auth/data/models/profile_update_request.dart';
 import 'package:flutter_frontend/features/auth/data/models/register_request.dart';
 import 'package:flutter_frontend/features/auth/data/models/user_response.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,7 +16,7 @@ void main() {
     lastName: 'Ribeyre',
     email: 'antoine@example.com',
     username: 'ant_oine',
-    location: 'Paris, France',
+    postalCode: '75001',
     password: 'Abcdefghij1!',
   );
   const LoginRequest credentials = LoginRequest(
@@ -232,6 +233,64 @@ void main() {
     expect(sent.url.path, '/api/auth/logout');
     expect(jsonDecode(sent.body), <String, dynamic>{
       'refresh_token': 'refresh-1',
+    });
+  });
+
+  group('updateCurrentUser', () {
+    const ProfileUpdateRequest update = ProfileUpdateRequest(
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      username: '  ada_updated  ',
+      email: 'ada@example.com',
+      postalCode: '75001',
+    );
+
+    test(
+      'sends the normalized username and parses the saved profile',
+      () async {
+        late http.Request sent;
+        final AuthApiService service = serviceWith((
+          http.Request request,
+        ) async {
+          sent = request;
+          return jsonResponse(<String, dynamic>{
+            'id': '00000000-0000-0000-0000-000000000001',
+            'prenom': 'Ada',
+            'nom': 'Lovelace',
+            'pseudonyme': 'ada_updated',
+            'email': 'ada@example.com',
+            'code_postal': '75001',
+            'date_creation': '2026-01-01T00:00:00Z',
+          }, 200);
+        });
+
+        final UserResponse user = await service.updateCurrentUser(
+          'access',
+          update,
+        );
+
+        expect(sent.method, 'PATCH');
+        expect(sent.url.path, '/api/auth/me');
+        expect(sent.headers['Authorization'], 'Bearer access');
+        expect(
+          (jsonDecode(sent.body) as Map<String, dynamic>)['username'],
+          'ada_updated',
+        );
+        expect(user.username, 'ada_updated');
+      },
+    );
+
+    test('reports a username conflict from the API', () async {
+      final AuthApiService service = serviceWith(
+        (_) async => jsonResponse(<String, String>{
+          'detail': 'Ce pseudonyme est déjà utilisé.',
+        }, 409),
+      );
+
+      await expectLater(
+        service.updateCurrentUser('access', update),
+        apiError(statusCode: 409, message: 'Ce pseudonyme est déjà utilisé.'),
+      );
     });
   });
 
